@@ -1,0 +1,80 @@
+<!-- Report Generator  -->
+<div class="container">
+	<div class="row">
+		<div class="col-sm-3"></div>
+		<div class="col-sm-6 title"><h2 >{{ title }}</h2><p class="headerMode">{{ mode }}</p></div>
+		<div class="col-sm-3"></div>
+	</div>
+
+	<form  name="myForm" class="form-signin" >
+			<input type='hidden' name='dc' id='dc' value = '{{{ dc }}}' >
+			<input type='hidden' name='allJobDir' id='allJobDir' value = '' >
+
+			<div class="row">
+					<div class="col-sm-4"></div>
+					<div class="col-sm-4">
+						<label class="selectLabel" > Workorder
+							<select id="workOrder" name="workOrder" class="selectpicker form-control"
+							 onChange = "updateSelect(this, 'reportGenerator' )" required autofocus >
+								{{#each workOrder }}
+										<option>{{ this }}</option>
+								{{/each}}
+								</select>
+						</label>
+					</div>
+					<div class="col-sm-4"></div>
+			</div>
+
+			<div class="row">
+					<div class="col-sm-4"></div>
+					<div class="col-sm-4">
+						<label class="selectLabel"> Dealer Code
+							<select id="dealerCode" name="dealerCode" class="selectpicker form-control" onChange = "getJobFolders(this)" required autofocus>
+										<option></option>
+								</select>
+						</label>
+					</div>
+					<div class="col-sm-4"></div>
+			</div>
+
+			<div class="row">
+					<div class="col-sm-4"></div>
+					<div class="col-sm-4">
+						<label class="selectLabel">Reports
+							<select id="selReport" name="selReport" class="selectpicker form-control"
+									required autofocus>
+										<option >Select</option>	
+										<option value='SD1'>All Items</option>
+										<option value='SD2'>Open Items</option>
+										<option value='SD3'>Printed Items</option>
+										<option value='SD4'>Files Not Found</option>
+										<option value='SD5'>Files Not Mailing</option>
+										<option value='SD6'>Over Runs</option>
+								</select>
+						</label>
+					</div>
+					<div class="col-sm-4"></div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-4"></div>
+					<div class="col-sm-4">
+						<button class="btn btn-sm btn-primary btn-block " id="accept" type="button"
+						 onClick = "validate_report('post','getReport');">Accept</button>
+
+						<button class="btn btn-sm btn-primary btn-block " type="button"
+						 onClick="getPage('post', 'home');">Return</button>
+
+						<div id="pdfWindow" style="display: block; text-align: center;"></div>	
+					</div>
+				<div class="col-sm-4"></div>
+			</div>
+
+	</form>
+	<div class="row">
+		<div class="col-sm-3"></div>
+		<div id="mess" class="col-sm-6" style="text-align: center; padding: 10px; background-color: lightblue; "></div>
+		<div class="col-sm-3"></div>
+	</div>
+
+</div>

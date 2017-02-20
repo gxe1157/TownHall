@@ -1,0 +1,58 @@
+<!-- res.redirect('/townHall/all/screen/'+data.workOrder+'/'+data.dealerCode+'/'+data.jobDir+'/'+data.allJobDir);
+ -->
+<div class="container">
+		<div class="title"><h2 class="form-signin-heading">{{ title }}</h2></div>
+		<div class="title">
+			<p class="editHeader">{{ workOrder }}</p>
+		</div>
+
+		<form name="myForm" method="post"  class="form-signin">
+			<!-- /addTown/:newDealerCode/:allJobDir/:workOrder			 -->
+			<input type="hidden" id="output" name="output" value="fromPostToScreen">
+			<input type="hidden" id="query" name="query" value="">						
+			<input type="hidden" id="jobDir" name="jobDir" value= "{{ jobDir }}" >			
+			<input type="hidden" id="workOrder" name="workOrder" value="{{ workOrder }}">
+			<input type="hidden" id="dealerCode" name="dealerCode" value="{{ dealerCode }}">
+			<input type="hidden" id="allJobDir" name="allJobDir" value="{{allJobDir}}">
+			<input type="hidden" id="mode" name="mode" value="addTown">
+
+			<div class="row">
+				<div class="col-sm-4" ></div>
+					<div class="col-sm-4">
+						<hr />						
+						<table>
+							<tr>
+							   <td style="font-size: 16px; font-weight: bold; width: 100px;">Prd Code:</td>
+							   <td><input style="text-align: right; width: 200px;" type="text" name="dcode"
+							    	id="dcode" class="form-control" value="{{ newDealerCode }}"  disabled /></td>
+							</tr>
+
+							<tr>
+							   <td style="font-size: 16px; font-weight: bold; width: 100px;">City:</td>
+							   <td><input style="text-align: right; width: 200px;" type="text" name="city"
+							    	id="city" class="form-control" value="" /></td>
+							</tr>
+
+							<tr>
+							   <td style="font-size: 16px; font-weight: bold; width: 100px;">Zip</td>
+							   <td><input style="text-align: right; width: 200px;" type="text" name="zip"
+							    	id="zip" class="form-control" value="" /></td>
+							</tr>
+
+							<tr>
+								<td style="font-size: 16px; font-weight: bold; width: 100px;">Count:</td>
+								<td><input style="text-align: right; width: 200px;" type="text" name="count"
+									 id="count"  class="form-control" value ="0" /></td>
+							</tr>
+
+						</table>
+						<hr />
+						<button class="btn btn-sm btn-primary btn-block" type="button" id="edit1"
+						 	name="edit1" onClick = "validate_addTown( 'POST', 'addRemoveTown')" >Accept</button>
+						<button class="btn btn-sm btn-primary btn-block" type="button" id="edit2"
+							name="edit2" onClick = "getPage( 'POST', 'displayTowns' )">Cancel</button>
+					</div>
+					<div class="col-sm-4"></div>
+			</div>
+		</form>
+</div>

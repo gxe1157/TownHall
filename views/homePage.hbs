@@ -1,0 +1,24 @@
+
+<div class="container">
+		<div class="title"><h2 class="form-signin-heading">{{ title }}</h2></div>
+		<form name="myForm" method="post"  class="form-signin">
+			<input type="hidden" name="URL" id="URL" value ="" />
+			<input type="hidden" name="mode" id="mode" value ="" />
+						
+			<div class="row">
+				<div class="col-sm-4" ></div>
+					<div class="col-sm-4">
+						<!-- <label>User Name</label> -->
+							<input type="text" name="user_name"
+							 id="user_name" class="form-control" placeholder='Enter User Id' required autofocus />
+							<button class="btn btn-sm btn-primary btn-block" type="button"
+							   id="updateOrder" name="updateOrder" onClick = "homePageButton(this)" >Process Work Order</button>
+							<button class="btn btn-sm btn-primary btn-block" type="button"
+							 id="newOrder" name="newOrder" onClick = "homePageButton(this)">Import Work Order Data</button>
+							<button class="btn btn-sm btn-primary btn-block" type="button"
+							 id="reportGenerator" name="reportGenerator" onClick = "homePageButton(this)">Reports</button>
+					</div>
+				<div class="col-sm-4"></div>
+			</div>
+		</form>
+</div>

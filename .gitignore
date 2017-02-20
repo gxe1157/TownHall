@@ -71,6 +71,13 @@ ehthumbs.db
 
 # Folder config file
 Desktop.ini
+*.pdf
+*.csv
+*.zip
+\lib
+\datasource
+
+
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
