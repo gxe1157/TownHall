@@ -5,7 +5,7 @@ var fs = require("fs");
 module.exports = function( myPath ){
     // console.log('1- myPath ',myPath );
     var fileIsNewJersey = false;
-    if( myPath.indexOf( '_NewJersey' ) != -1 ) fileIsNewJersey = true;    
+    if( myPath.indexOf( '_NewJersey' ) != -1 ) fileIsNewJersey = true;
 
     var files = fs.readdirSync(myPath);
     var fileLength = files.length;
@@ -17,7 +17,7 @@ module.exports = function( myPath ){
 
     var fixTownName = function(checkThis){
         if( checkThis != undefined )
-            return checkThis.split('.',1).toString().toUpperCase();         
+            return checkThis.split('.',1).toString().toUpperCase();
     }
 
 
@@ -38,14 +38,12 @@ module.exports = function( myPath ){
 
             /* Init chkMatch on first pass */
             if( i === 0 ) chkMatch = dealerFile;
-
             if( chkMatch !== dealerFile ) buildObj(chkMatch, arrImage );
             arrImage.push(files[i]);
-            if( i === fileLength-1 ) buildObj(chkMatch, arrImage );
-        }    
+        }
     }
-
-    // console.log('dirFiles',objFileNames);
+    if( arrImage.length > 0) buildObj(chkMatch, arrImage );
+    console.log(fileLength, 'dirFiles',objFileNames);
     return objFileNames;
 
-}
+};
