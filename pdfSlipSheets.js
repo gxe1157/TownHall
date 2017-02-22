@@ -46,16 +46,16 @@ module.exports = function(data, myPath, idNum) {
 				   .fillColor('#000')
 				   .moveDown()
 				   .text( 'Mail Cycle: '+workOrder, { width: 268, align: 'center' } )
-				   .moveDown()
+				   .moveDown(5)
 				   .text( town, { width: 268, align: 'center' } )
 				   .moveDown()
 				   .text( 'Print Date: '+printDate, { width: 268, align: 'center' } )
 				   .text( printTotal, { width: 268, align: 'center' } );
 
 				myDoc.fontSize(12)
-				   .text( `[ ${ idNum.length } Files printed in this batch.  ]`, 10, 648,  { width: 268, align: 'center' } )
+				   .text( `[ ${ idNum.length } Files printed in this batch.  ]`, 10, 504,  { width: 268, align: 'center' } )
 				   .moveDown()
-  				   .text( idNum.toString(), { width: 250, align: 'left' } )
+  				   .text( '     '+idNum.toString(), { width: 250, align: 'left' } )
 
 				// Close create PDF
 				myDoc.end();
