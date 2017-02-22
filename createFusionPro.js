@@ -90,7 +90,7 @@ module.exports = function(data, res) {
 
         if( dealerCode.toUpperCase() == '_NEWJERSEY'){
             var code       = joinLines(tempArray[0],2);
-            var promoType  = tempArray[0].replace(`${code}-`, '').split('-',1).toString();            
+            var promoType  = tempArray[0].replace(`${code}-`, '').split('-',1).toString();
 
             var data   = ({ code      : code,
                             promoType : jobDir,
@@ -121,15 +121,18 @@ module.exports = function(data, res) {
             .then(function( results ) { // records found
                 // console.log('Results ....', results );
                 let expireMess = results[0].expireMessage;
+                let dirName = __dirname.split('\\').join('\\\\');
+                //  "C:\\Users\\fsm\\Express\\TownHall\\dataSource\\Mar2017\\CDS-132\\GUIDES-CDS-132";
+
                 for ( var x = 0; x < oCount; x++ ){
                     // console.log(x, 'array', array,'dealerId',dealerId );
                     if( x == 0 ){
-                        file.write( `Slip Sht, ${oProduct},${ data.fileOutput}, ${workOrder},\n`);
+                        file.write( `Slip Sht, ${oProduct},${ data.fileOutput},,,,,${dirName},dataSource,${workOrder},${dealerCode},${jobDir}\n`);
                         pdfSlipSheets(data, myPath, idNum);
                     }
 
                     for ( var i = 0; i < array.length; i++){
-                        stdOut =`${x+1}, ${oProduct}, ${array[i]}, workOrder, jobTitle, ${today}, ${expireMess}\n`;
+                        stdOut =`${x+1}, ${oProduct}, ${array[i]}, workOrder, jobTitle, ${today}, ${expireMess},${dirName},dataSource,${workOrder},${dealerCode},${jobDir}\n`;
                         // console.log('**sets: ',stdOut);
                         file.write(stdOut);
                         /* Move first occurance of files to done sub directory */
@@ -142,7 +145,6 @@ module.exports = function(data, res) {
                 console.log('Failed ....',  results );
                 process.exit(1);
             })
-
     }
 
     /* ------------------- */
@@ -167,16 +169,16 @@ module.exports = function(data, res) {
     });
 
         /* array printFiles sent from script.js */
-        var header = 'count, objProduct, fileName, jobNo, jobTitle, date, expireMess\n';
+        var header = 'count, objProduct, fileName, jobNo, jobTitle, date, expireMess,filePath,dataSource,workOrd,jobDir,promoType\n';
         file.write( header );
 
         var idNum =[], tempVar;
         printFiles.forEach(function(entry) {
-           tempVar = entry.split('|',1).toString().trim().split('-');  
+           tempVar = entry.split('|',1).toString().trim().split('-');
            tempVar.length == 1 ? idNum.push(tempVar[0]) : idNum.push(tempVar[2]);
         });
-        console.log('idNum', idNum.toString());
-            
+        // console.log('idNum', idNum.toString());
+
         printFiles.forEach(function(entry) {
 
             printStatus = 'PDF Not Found';
@@ -195,7 +197,7 @@ module.exports = function(data, res) {
             }
 
         });
-        
+
     var flds = ['Status', 'ModDate', 'Reprint', 'PrintCount', 'BatchNo '];
     sqlModel.update( updateSqlFile, flds);
 
