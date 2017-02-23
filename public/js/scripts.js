@@ -80,8 +80,7 @@ var checkCountPrinted = function() {
         _('dropTable').innerHTML = '';      
     else
         _('dropTable').innerHTML = `&nbsp;&nbsp;&nbsp;<button class="btn btn-xsm btn-danger btn-inline-block "
-         type="button" onclick= " getPage('post', 'dropTable' )">Delete File </button>`;      
-
+         type="button" onclick= " validate_delete('post', 'dropTable')">Delete File </button>`;      
 }
 
 var prepareData = function (query){
@@ -216,7 +215,6 @@ var homePageButton = function( obj ){
 
 var getPage = function( myMethod, myAction ){
     // console.log(myMethod, myAction);
-
     document.myForm.method= myMethod;
     document.myForm.action= '/'+myAction;
     document.myForm.submit();
@@ -295,7 +293,7 @@ var chkBoxScan = function( mode, toggleState ){
     // alert('Scan complete...............'+totalPages);
 }
 
- var updateJobDir = function(){
+var updateJobDir = function(){
     var [sel, selwo, dealerc ] =  getKeyData();
     _('allJobDir').value =  oJobDir[sel][selwo][ dealerc ].toString();
 }
@@ -330,7 +328,13 @@ var validate_addTown = function( myMethod, myAction ) {
 
 var validate_delete = function( myMethod, myAction ) {
 
-    var r = confirm(`You are about to delete ${_('sqlDcode').value}.`);
+    if( _('sqlDcode') && _('sqlDcode').length > 0 ){
+      var confirmMess = `You are about to delete ${ _('sqlDcode').value }.`;
+    } else {
+      var confirmMess = `You are about to drop the databse.`;
+    } 
+
+    var r = confirm( confirmMess );
     if (r == false) {
         _('count').value = _('sqlCount').value;
         return false;
