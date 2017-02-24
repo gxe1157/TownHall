@@ -56,6 +56,7 @@ module.exports = function(data, res) {
 
     var batchNo = function(){
         var [ todayIs, timeNow ] = dateParams();
+        todayIs = todayIs.length== 7 ? '0'+todayIs.substr(0,7) : todayIs;
         return todayIs.slice(0,4)+'-'+timeNow;
     }
 

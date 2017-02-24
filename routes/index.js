@@ -128,14 +128,17 @@ exports.reportPDF = function(req, res) {
     /* Import then re-direct to runQuery */
     importData( res, req.params )
         .then(function( results ) {
-            var pdfReport = require('../pdfReport');          
+            if( req.params['query'] == 'SD7' )
+                var pdfReport = require('../pdfCheckList');                          
+            else
+                var pdfReport = require('../pdfReport');          
+
             pdfReport(req, res);          
         })
         .catch(function( results ) {
             res.send( `File not found` );                 
         })
 };
-
 
 exports.getTownData = function(req,res){
     res.render('getTownInfo', {
@@ -147,7 +150,6 @@ exports.getTownData = function(req,res){
         newDealerCode: req.params['newDealerCode']
     });
 }
-
 
 exports.dropFromTable = function(req, res) {
     var [ sqlRequest, sqlModel, GVM ] = require('./sqlSetup')(req, res);
