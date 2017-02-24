@@ -2,8 +2,6 @@
 // Evelio Velez Jr.  Dec 13 2016
 
 module.exports = function(data, myPath, idNum) {
-	// console.log('data', data);
-	
 		var fs = require("fs");
 		var pdf = require("pdfkit");
 
@@ -16,7 +14,6 @@ module.exports = function(data, myPath, idNum) {
 		var fileOutput= data.fileOutput;
 
 		// console.log("Prg: pdfSlipsheets: 16 ...", fileOutput);
-		console.log('idNum',idNum);
 
 		var createPDF = function(){
 				/* Size based on 72 pixes/inch

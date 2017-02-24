@@ -32,7 +32,7 @@ window.onload = function() {
 
   if(  _('TotalCount') )  chkBoxScan( 'init', null );
   if( _('jobDirSelected') ) _('selReport').value = _( 'jobDirSelected' ).value ;
-  if( _('arrlength') ) checkCountPrinted();
+  if( _('arrlength') ) checkCountPrinted('SD1');
 
 }
 
@@ -65,9 +65,8 @@ var pagesOutput = function(lineNum){
     return Math.ceil(x);
 }
 
-
-var checkCountPrinted = function() {
-    var arrLen    = _('arrlength').value;
+var checkCountPrinted = function( actionState ) {
+    var arrLen     = _('arrlength').value;
     var printCount = 0;
     arrLen++;
 
@@ -75,12 +74,14 @@ var checkCountPrinted = function() {
          printed  = +_('printed'+i).innerHTML;
          printCount += printed;
     }
-    
-    if( printCount > 0 )
-        _('dropTable').innerHTML = '';      
-    else
+
+    if( printCount == 0 && actionState == 'SD1'){
         _('dropTable').innerHTML = `&nbsp;&nbsp;&nbsp;<button class="btn btn-xsm btn-danger btn-inline-block "
-         type="button" onclick= " validate_delete('post', 'dropTable')">Delete File </button>`;      
+         type="button" onclick= " validate_delete('post', 'dropTable')">Delete File </button>`;
+    } else {
+        _('dropTable').innerHTML = '';            
+    }
+        
 }
 
 var prepareData = function (query){
@@ -101,7 +102,6 @@ var prepareData = function (query){
          if(  ( _('chkBx'+i).checked == true && setCount > 0 ) || ( query == 'doReverse' && _('chkBx'+i).checked == true ) )
             printData.push( `${townCode[0]}|${setCount}|${printed}|${_('fileCnt'+i).innerHTML}|${i}|${ _('RecNo'+i).value }` );
     }
-    // console.log('printData', printData);
 
     return printData;
 }
@@ -243,7 +243,6 @@ var chkBox = function ( lineNum ){
         noPages  = pagesOutput(lineNum);
         _( 'pages'+lineNum).innerHTML = noPages;
     }
-    // chkBoxByGroup( null, lineNum );
 
     return  noPages;
 }
@@ -289,8 +288,6 @@ var chkBoxScan = function( mode, toggleState ){
         totalPages += chkBox(i);
         _('TotalCount').innerHTML = totalPages > 0 ? totalPages : null;
     }
-
-    // alert('Scan complete...............'+totalPages);
 }
 
 var updateJobDir = function(){
@@ -386,7 +383,6 @@ var validate_newOrder = function( myMethod, myAction ){
 
     updateJobDir();
 
-    // go see if already imported
     var data = '/queryData/'+_('mode').value+'/'+uploadName+'/'+_('workOrder').value;
     ajaxIsFileImported(data, myMethod, myAction, _('mode').value, uploadName);
 }
@@ -398,11 +394,10 @@ var validate_update = function(){
     }
     updateJobDir();
 
-    // go see if already imported
     var uploadName = null;
     var data = '/queryData/'+_('mode').value+'/'+uploadName+'/'+_('workOrder').value+'/'+_('dealerCode').value+'/'+_('jobDir').value;
     ajaxIsFileImported(data, 'post', 'getOrder', _('mode').value);
-    // return false;
+
 }
 
 var validate_report = function( myMethod, myAction ){
@@ -432,7 +427,6 @@ var ajaxPDF = function( data ) {
           else
              _('pdfWindow').innerHTML = `<a href="${resp}" class="btn btn-danger" target="_blank" onClick="Javascript: _('pdfWindow').innerHTML =''" >Open Pdf</a>`;
 
-          // console.log('resp', resp);
         }
     };
 
@@ -478,8 +472,6 @@ var ajaxExpireMess = function(data){
           // alert( "readyState: "+this.readyState+" | status: "+this.status )
           var resp = this.responseText;
           var reply = resp.split(",");
-          // console.log(reply);
-          // alert('reply: '+reply[0]);
 
           var lineNumber = 0;
           for( var line in reply ){
@@ -512,7 +504,6 @@ var ajaxFusionPro = function(data){
                var [ response, modDate, reprint, printed, lineNum, recNo, dCode ] = reply[line].split("|");
                lineNumber = lineNum.replace(/\s+/g, '');
                _( 'respLine'+lineNumber ).innerHTML = response;
-               // _(`ModDate${lineNumber}`).innerHTML = printed;
                _(`reprint${lineNumber}`).innerHTML = reprint;
                _(`printed${lineNumber}`).innerHTML = printed;
                _(`chkBx${lineNumber}`).checked = false;
@@ -520,7 +511,7 @@ var ajaxFusionPro = function(data){
                _('TotalCount').innerHTML = null;
           }
           $('#selReport').click();
-          checkCountPrinted();                    
+          checkCountPrinted('SD1');                    
       }
     };
 
@@ -560,7 +551,6 @@ var ajaxReq =  function(data, query){
                            <td  id="reprint${lineNumber}" class="tdNumeric">${responseData['Reprint']}</td>
                            <td  id="printed${lineNumber}" class="tdNumeric">${responseData['PrintCount']} </td>
                            <td class="tdNumeric" id="pages${lineNumber}">&nbsp;</td>
-
                            </tr>`;
           }
 
@@ -572,8 +562,7 @@ var ajaxReq =  function(data, query){
 
           chkBoxScan( 'init', null);
           $('#selReport').click();
-          checkCountPrinted();        
-
+          checkCountPrinted(query);        
         }
 
     };
