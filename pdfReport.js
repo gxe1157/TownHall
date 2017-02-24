@@ -193,7 +193,7 @@ module.exports = function(req, res) {
 
 	db.close(function() {
 		/* Close create PDF */
-		if( rowData )
+		if( rowData.length > 0 )
 			createPDF(rowData);
 		else
 			res.send( `No Data Available...... ` );
