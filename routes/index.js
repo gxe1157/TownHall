@@ -217,28 +217,37 @@ exports.expireMessage = function(req, res) {
 
 exports.doReverse = function(req, res) {
     var [ sqlRequest, sqlModel, GVM  ] = require('./sqlSetup')(req, res);
+        console.log('sqlRequest',sqlRequest);
 
     var updateDealerStatus = [];
     var updateSqlFile = [];
+    var deletePDF_SS  = [];
 
-    var sqlUpdate = function( data, callback ) {
+    var sqlUpdate = function( data ) {
         /* read req params and update sql */
+        var fs = require('fs');        
         var cnt = 0;
         var printFiles = data.printData.split(",");
 
         printFiles.forEach(function(entry) {
             var [ findProduct, setCount,printed,nofiles, respIndex, RecNo ] = entry.split('|');    
+            deletePDF_SS.push(`${findProduct.trim()}-${data.jobDir}-SS.pdf`);
             updateSqlFile.push(`....|${ GVM.getDate()}|0|0| |${RecNo}`);
             updateDealerStatus.push(`....| ${ GVM.getDate()} | 0 | 0 |${respIndex}|${RecNo}|${findProduct}`);
         });
-
+            
+        deletePDF_SS.forEach(function(entry) {
+            fs.unlink(`./datasource/${data.workOrder}/${data.dealerCode}/${data.jobDir}/${entry}`, (err) => {
+              if (err) console.log( 'error: '+entry+' | ', err);
+            });
+        });
+            
         var flds = ['Status', 'ModDate', 'Reprint', 'PrintCount', 'BatchNo '];
         sqlModel.update( updateSqlFile, flds);
         res.send( updateDealerStatus.toString() );
-
     }
-    sqlUpdate(sqlRequest);
 
+    sqlUpdate(sqlRequest);
 };
 
 exports.fusionProOutput = function(req, res) {

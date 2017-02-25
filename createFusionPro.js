@@ -84,46 +84,23 @@ module.exports = function(data, res) {
 
     var writeToFile = function( oProduct, oCount, RecNo, idNum ){
         var stdOut, fileName;
-        var array      = objProduct[oProduct];
-        var today      =  GVM.getDate();
-        var tempArray  = objProduct[oProduct];
+        var array   = objProduct[oProduct];
+        var today   =  GVM.getDate();
 
-
-        if( dealerCode.toUpperCase() == '_NEWJERSEY'){
-            var code       = joinLines(tempArray[0],2);
-            var promoType  = tempArray[0].replace(`${code}-`, '').split('-',1).toString();
-
-            var data   = ({ code      : code,
-                            promoType : jobDir,
-                            town      : idNum.toString(),
-                            printDate : today,
-                            workOrder : workOrder,
-                            printTotal: `${oCount} sets | ${array.length} cards`,
-                            fileOutput: `${code}-${promoType}-SS.pdf`
-                         });
-                        // console.log('data',data);
-        }
-        else{
-            var code       = joinLines(tempArray[0],3);
-            var promoType  = tempArray[0].replace(`${code}-`, '').split('-',1).toString();
-            var [ a, town] = tempArray[0].split(`${code}-${promoType}-`);
-
-            var data   = ({ code      : code,
-                            promoType : promoType,
-                            town      : town,
-                            printDate : today,
-                            workOrder : workOrder,
-                            printTotal: `${oCount} sets | ${array.length} cards`,
-                            fileOutput: `${code}-${promoType}.pdf`
-                         });
-        }
+        var data   = ({ code      : oProduct,
+                        promoType : jobDir,
+                        town      : objProduct[oProduct][0],
+                        printDate : today,
+                        workOrder : workOrder,
+                        printTotal: `${oCount} sets | ${array.length} cards`,
+                        fileOutput: `${oProduct}-${jobDir}-SS.pdf`
+                     });
+                     console.log('data',data);
 
         sqlModel.findById( 'RecNo', RecNo )
             .then(function( results ) { // records found
-                // console.log('Results ....', results );
                 let expireMess = results[0].expireMessage;
                 let dirName = __dirname.split('\\').join('\\\\');
-                //  "C:\\Users\\fsm\\Express\\TownHall\\dataSource\\Mar2017\\CDS-132\\GUIDES-CDS-132";
 
                 for ( var x = 0; x < oCount; x++ ){
                     // console.log(x, 'array', array,'dealerId',dealerId );
@@ -150,9 +127,7 @@ module.exports = function(data, res) {
 
     /* ------------------- */
     /* Begin main app here */
-    // dd('getOrder', req, null);
     objProduct = getFiles(myPath);
-    // console.log('objProduct', Object.keys(objProduct));
 
     /* Write to file */
     if (!isDirSync(`${myPath}/done`)) {
@@ -176,12 +151,10 @@ module.exports = function(data, res) {
         var idNum =[], tempVar;
         printFiles.forEach(function(entry) {
            tempVar = entry.split('|',1).toString().trim().split('-');
-           tempVar.length == 1 ? idNum.push(tempVar[0]) : idNum.push(tempVar[2]);
+           tempVar.length == 1 ? idNum.push(tempVar[0].toString() ) : idNum.push(tempVar[2].toString() );
         });
-        // console.log('idNum', idNum.toString());
 
         printFiles.forEach(function(entry) {
-
             printStatus = 'PDF Not Found';
             var [ dealerId, setCount,printed,nofiles, respIndex, RecNo ] = entry.split('|');
             dealerId = dealerId.toUpperCase().replace(/\s+/g, '');

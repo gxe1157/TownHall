@@ -52,7 +52,7 @@ module.exports = function(data, myPath, idNum) {
 				myDoc.fontSize(12)
 				   .text( `[ ${ idNum.length } Files printed in this batch.  ]`, 10, 504,  { width: 268, align: 'center' } )
 				   .moveDown()
-  				   .text( '     '+idNum.toString(), { width: 250, align: 'left' } )
+  				   .text( '     '+idNum, { width: 250, align: 'left' } )
 
 				// Close create PDF
 				myDoc.end();
