@@ -43,7 +43,7 @@ module.exports = function( myPath ){
         }
     }
     if( arrImage.length > 0) buildObj(chkMatch, arrImage );
-    // console.log(fileLength, 'dirFiles',objFileNames);
+ 
     return objFileNames;
 
 };

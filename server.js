@@ -87,6 +87,8 @@ app.get('/doReverse/:workOrder/:dealerCode/:jobDir/:printData?', routes.doRevers
 
 app.get('/lib/pdfout/:pdfName?', routes.pdfBrowser );
 
+app.get('/lib/:woDir?', routes.getStatusData );
+
 app.get('*', routes.notFound);
 
 app.listen(PORT, function() {

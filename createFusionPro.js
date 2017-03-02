@@ -17,8 +17,6 @@ module.exports = function(data, res) {
     var sqlModel  = require('./sqlModel');
     sqlModel.init( userTable, GVM.sqlFileName);
 
-    // console.log('Prg:19 ceateFusionPro:....', data);
-
     var start = Date.now();
     var updateDealerStatus = [];
     var updateSqlFile = [];

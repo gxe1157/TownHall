@@ -24,7 +24,7 @@ exports.pageProcess  = function(req,res){
     var mode         = req.body.mode;
 
     var dirList  = require('../dirList');
-    var [ allWorkOrders, workOrders ] = dirList();
+    var [ allWorkOrders, workOrders ] = dirList(res);
 
     /* redirect to var pageRedirect */
     res.render( pageRedirect, {
@@ -81,7 +81,6 @@ exports.editData = function(req,res){
 exports.isFileImported = function(req, res ){
     var importData = require('../isImported');
     var data = req.params;
-    // dd('isFileImported', req, data );
 
     importData( res, data)
         .then(function( results ) { // records found
@@ -263,6 +262,24 @@ exports.pdfBrowser = function(req, res) {
         res.contentType("application/pdf");
         res.end(data);
     });
+}
+
+exports.getStatusData = function(req, res) {
+    var fs = require('fs');
+    var GVM = res.locals;
+    var sqlModel  = require('../sqlModel');    
+    var userTable = req.params['woDir'];
+    qStmnt =`SELECT WorkOrder, Dealercode, count, printCount, ( printCount - count) as val FROM ${userTable} group by dealercode`;
+
+    sqlModel.select( qStmnt, userTable, GVM )
+        .then(function( results ) { // records found
+            res.contentType("application/JSON");
+            res.end( JSON.stringify(results) );             
+        })
+        .catch(function( results ) {
+            res.end("Page is FOUND !! ..... ");        
+            // process.exit(1);
+        });
 }
 
 // Route for all other page requests

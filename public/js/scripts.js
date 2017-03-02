@@ -1,4 +1,3 @@
-var oJobDir = {};
 
 $(document).ready(function(){
 
@@ -157,16 +156,18 @@ var messDisplay = function(message){
 }
 
 var updateSelect = function (obj, addSelectValue ){
+    var workOrderDir = obj.value;
+
     _('dealerCode').options.length = 0;
     if( obj.selectedIndex == 0 ){
         if( document.getElementById("jobDir") ){
           _('jobDir').options.length = 0;
         }
     }
-    getDealerCodes( addSelectValue );
+    getDealerCodes( addSelectValue, workOrderDir );
 }
 
-var getDealerCodes = function( addSelectValue ){
+var getDealerCodes = function( addSelectValue, workOrderDir ){
     clearMess();
     var [sel, selwo ] =  getKeyData();
     if( selwo == 'Select') return;
@@ -175,7 +176,12 @@ var getDealerCodes = function( addSelectValue ){
     var key2 = Object.keys(oJobDir[sel][selwo]);
     if( addSelectValue == 'reportGenerator' ) key2.unshift( 'All Dealers' );
     key2.unshift( 'Select' );
-    buildSelOpt('dealerCode',key2);
+
+    ajaxStatus( workOrderDir )
+      .then(function( results ) {
+          buildSelOpt('dealerCode',key2, results);
+      });
+
 }
 
 var getJobFolders = function(){
@@ -184,7 +190,7 @@ var getJobFolders = function(){
 
     var [sel, selwo, dealerc ] =  getKeyData();
     var key3    = oJobDir[sel][selwo][ dealerc ];
-    buildSelOpt('jobDir',key3);
+    buildSelOpt('jobDir',key3, null);
 }
 
 var getKeyData = function(){
@@ -192,11 +198,16 @@ var getKeyData = function(){
     return [ _('workOrder').selectedIndex -1, _('workOrder').value, _('dealerCode').value ];
 }
 
-var buildSelOpt = function( selName, arrSel ){
+var buildSelOpt = function( selName, arrSel, results ){
     if( document.getElementById(selName) ){
         _(selName).options.length = 0;
         for( var i in arrSel){
-            _(selName).options[i] = new Option(`${arrSel[i]}`);
+            _(selName).options[i] = new Option( arrSel[i] );
+
+            if( results != null ){
+                _(selName).options[i].style.color = results[ arrSel[i] ] == 0 ? '#000' : 'red';
+                _(selName).options[0].style.color = '#000';
+            }    
         }
     }
 }
@@ -413,13 +424,36 @@ var validate_report = function( myMethod, myAction ){
     ajaxPDF( data );
 }
 
+var ajaxStatus = function( data ) {
+    var oDC = {};
+    
+    return new Promise(function (resolve, reject) {
+      var xhttp_status = new XMLHttpRequest();
+      xhttp_status.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            var resp = this.responseText;
+            var arr_from_json = JSON.parse( resp );
+            var name = '';
+            for( var line in arr_from_json){
+                Dname = arr_from_json[line].DealerCode;              
+                oDC[ Dname ] = arr_from_json[line].val >= 0 ? 1: 0;
+            }
+            console.log( oDC );
+            resolve( oDC );          
+          }
+      };
+
+      xhttp_status.open( "GET", "/lib/"+data, true );
+      xhttp_status.send();
+    })// end promise
+}
+
 
 var ajaxPDF = function( data ) {
     var xhttp_rpt = new XMLHttpRequest();
 
     xhttp_rpt.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-          // alert( "readyState2: "+this.readyState+" | status: "+this.status )
           var resp = this.responseText;
 
           if( resp == 'File not found' )
@@ -438,7 +472,6 @@ var ajaxIsFileImported = function(data, myMethod, myAction, mode, uploadName){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
-          // alert( "readyState: "+this.readyState+" | status: "+this.status )
           var resp = this.responseText;
           if( resp == 'true' ){ // 100 records found
               if( mode == 'updateOrder'){
@@ -469,7 +502,6 @@ var ajaxExpireMess = function(data){
     // alert( "readyState: "+this.readyState+" | status: "+this.status );
     xhttp_updt.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
-          // alert( "readyState: "+this.readyState+" | status: "+this.status )
           var resp = this.responseText;
           var reply = resp.split(",");
 
@@ -494,7 +526,6 @@ var ajaxFusionPro = function(data){
     // alert( "readyState: "+this.readyState+" | status: "+this.status );
     xhttp_updt.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
-          // alert( "readyState: "+this.readyState+" | status: "+this.status )
           var resp = this.responseText;
           var reply = resp.split(",");
           var lineNumber = 0;
@@ -523,7 +554,6 @@ var ajaxReq =  function(data, query){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-          // alert( "readyState: "+this.readyState+" | status: "+this.status )
           var resp = this.responseText;
           // console.log('rest', resp);
           var arrResponse = JSON.parse(resp);

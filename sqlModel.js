@@ -106,39 +106,41 @@ module.exports = function( ) {
 
             db.close();
 
-            // db.close(function() {
-            //   /* Close create PDF */
-
-            // });
         }); // end db.serialize
     } // end updateInsertData
 
+    var selectQuery = function( qStmnt, userTable, GVM ){
+        var rowData = [];
+        var errorMess ='';
+        var db = new GVM.dbSqlite3.Database(GVM.sqlFileName);        
 
-    var selectQuery = function( qStmnt ){
-        // var rowData = [];
-        // return new Promise(function (resolve, reject) {
-        //     db = new dbSqlite3.Database(sqlFileName);
-        //     db.serialize(function() {
-        //         db.all(qStmnt, function(err, row) {
-        //             if(err){
-        //                 console.log(err);
-        //                 return err;
-        //             }
-        //             rowData = row;
-        //         });
-        //     }); // End db.serialize
+        return new Promise(function (resolve, reject) {
+            db.serialize(function() {
+                db.get(`SELECT name FROM sqlite_master WHERE type='table' AND name='${userTable}'`, function(error, row) {
+                    if (row !== undefined) {
+                        // console.log(`table ${userTable}, exists............ `);
+                        db.all(qStmnt, function(err, rows) {
+                            if(err) console.log(err);
+                            rowData = rows;
+                            // console.log('rows', rows);
+                        });
+                    } else {
+                        // errorMess = `table ${userTable}, does not exists.......` ;
+                    }
 
-        //     db.close(function() {
-        //         /* Close create PDF */
-        //         if ( rowData.length > 0 ) {
-        //             // console.log('rowData',rowData[0].Dcode );
-        //             resolve( rowData );
-        //         } else {
-        //             reject( 'failed' );
-        //         }
-        //     });
-        // });// end promise
-
+                    db.close(function() {
+                        /* Close create PDF */
+                        if ( rowData.length > 0 ) {
+                            // console.log('rowData',rowData[0].Dcode );
+                            resolve( rowData );
+                        } else {
+                            // if( rowData.length == 0 ) errorMess = `table ${userTable} exists but no records found .... `;
+                            reject( errorMess );
+                        }
+                    });
+                });                
+            }); // End db.serialize            
+        });// end promise
     } // end of selectQuery
 
     var deleteById = function( param, fldName ){
@@ -174,10 +176,8 @@ module.exports = function( ) {
             db.close(function() {
                 /* Close create PDF */
                 if ( rowData.length > 0 ) {
-                    // console.log('sqlModel: success!: ', rowData);
                     resolve( rowData );
                 } else {
-                    // console.log('sqlModel: failed: ', rowData);
                     reject( 'failed' );
                 }
             });

@@ -1,13 +1,11 @@
 
-
 const fs  = require('fs');
 const path= require('path');
 var arrObj = {}
 
-module.exports = function (res, data) {
+module.exports = function (res) {
     var dirSource = '';
     basePath  = './datasource';
-
 
     var getDirList = function(file, index){
          return fs.statSync( path.join( dirSource, file )).isDirectory() ?  file : '';
@@ -20,11 +18,12 @@ module.exports = function (res, data) {
             return results;
     }
 
-
     var readDir = function( basePath ){
         var buildObj = {};
         /* Get all directory orders */
         var baseDir  = readPath( '' );
+        var qStmnt, getCount = 0;
+
         var jobDir    = [];
         var countDir = 0;
         for (var i=0; i<baseDir.length; i++) {
