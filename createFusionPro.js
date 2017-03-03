@@ -85,15 +85,17 @@ module.exports = function(data, res) {
         var array   = objProduct[oProduct];
         var today   =  GVM.getDate();
 
+        var promoName = jobDir
+
         var data   = ({ code      : oProduct,
-                        promoType : jobDir,
+                        promoType : joinLines(jobDir,1),
                         town      : objProduct[oProduct][0],
                         printDate : today,
                         workOrder : workOrder,
                         printTotal: `${oCount} sets | ${array.length} cards`,
                         fileOutput: `${oProduct}-${jobDir}-SS.pdf`
                      });
-                     console.log('data',data);
+                     // console.log('data',data);
 
         sqlModel.findById( 'RecNo', RecNo )
             .then(function( results ) { // records found

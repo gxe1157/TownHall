@@ -44,7 +44,7 @@ module.exports = function(data, myPath, idNum) {
 				   .moveDown()
 				   .text( 'Mail Cycle: '+workOrder, { width: 268, align: 'center' } )
 				   .moveDown(5)
-				   .text( town, { width: 268, align: 'center' } )
+				   .text( town, { width: 240, align: 'center' } )
 				   .moveDown()
 				   .text( 'Print Date: '+printDate, { width: 268, align: 'center' } )
 				   .text( printTotal, { width: 268, align: 'center' } );

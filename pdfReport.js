@@ -8,11 +8,14 @@ module.exports = function(req, res) {
 	/* Global functions */
 	var GVM = res.locals;
 	var sqlRequest = GVM.isObjEmpty( req.params ) ? req.body: req.params;
+	var userTable  = sqlRequest.workOrder;
+	var dealerCode = sqlRequest.dealerCode;
+
+console.log('___', sqlRequest);
 
 	/* Init SQLite3 */
 	var sqlModel  = require('./sqlModel');
 	sqlModel.init( userTable, GVM.sqlFileName);
-	var userTable = sqlRequest.workOrder;
 
     /* PDF setup */
     var pos_x = 0, pos_y = 0, moveLine = 20;
@@ -62,22 +65,31 @@ module.exports = function(req, res) {
     var pdfLine = function(){
     	if( oData['ModDate'] == null ) oData['ModDate'] = '';
 
-			myDoc.font('Times-Roman')
-				 .fontSize(10)
-				 .text( oData['Dcode'], pos_x, pos_y, { width: 60, align: 'left' } )
-				 .text( oData['City'], pos_x+55, pos_y, { width: 150, align: 'left' } )
-				 .text( oData['NoFiles'], pos_x*4, pos_y, { width: 18, align: 'right' } )
-				 .text( oData['Count'], pos_x*4.4, pos_y, { width: 18, align: 'right' } )
-				 .text( oData['ModDate'], pos_x*4.6, pos_y, { width: 54, align: 'right' } );
+    		if( dealerCode.toUpperCase() == '_NEWJERSEY' ) {
+				myDoc.font('Times-Roman')
+					.fontSize(10)
+					.text( oData['Dcode'], pos_x, pos_y, { width: 140, align: 'left' } );
+			}
+			else{	 
+				myDoc.font('Times-Roman')
+					.fontSize(10)
+					.text( oData['Dcode'], pos_x, pos_y, { width: 70, align: 'left' } )
+					.text( oData['City'], pos_x+55, pos_y, { width: 140, align: 'left' } );
+			}
 
-				if( sqlRequest.query == 'SD6' ){
-					var overs = +oData['PrintCount'] - +oData['Count'];
-				    myDoc.text( oData['PrintCount'], pos_x*5.5, pos_y, { width: 72, align: 'right' } )
-				 		 .text( overs, pos_x*7, pos_y, { width: 36, align: 'right' } );
-				}
-				else
-				    myDoc.text( oData['Status'], pos_x*5.5, pos_y, { width: 144, align: 'left' } )
-				 		 .text( oData['PrintCount'], pos_x*7, pos_y, { width: 36, align: 'right' } );
+			myDoc.font('Times-Roman')				 
+				.text( oData['NoFiles'], pos_x*4, pos_y, { width: 18, align: 'right' } )
+				.text( oData['Count'], pos_x*4.4, pos_y, { width: 18, align: 'right' } )
+				.text( oData['ModDate'], pos_x*4.6, pos_y, { width: 54, align: 'right' } );
+
+			if( sqlRequest.query == 'SD6' ){
+				var overs = +oData['PrintCount'] - +oData['Count'];
+			    myDoc.text( oData['PrintCount'], pos_x*5.5, pos_y, { width: 72, align: 'right' } )
+			 		 .text( overs, pos_x*7, pos_y, { width: 36, align: 'right' } );
+			}
+			else
+			    myDoc.text( oData['Status'], pos_x*5.5, pos_y, { width: 144, align: 'left' } )
+			 		 .text( oData['PrintCount'], pos_x*7, pos_y, { width: 36, align: 'right' } );
 
 	  	}
 

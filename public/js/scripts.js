@@ -204,7 +204,7 @@ var buildSelOpt = function( selName, arrSel, results ){
         for( var i in arrSel){
             _(selName).options[i] = new Option( arrSel[i] );
 
-            if( results != null ){
+            if( results != null && results[ arrSel[i] ] != undefined ){
                 _(selName).options[i].style.color = results[ arrSel[i] ] == 0 ? '#000' : 'red';
                 _(selName).options[0].style.color = '#000';
             }    
