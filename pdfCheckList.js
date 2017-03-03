@@ -60,7 +60,7 @@ var fs = require("fs");
 
 		myDoc.font('Times-Roman')
 			 .fontSize(10)
-			 .text( oData['Dcode'], pos_x, pos_y, { width: 60, align: 'left' } )
+			 .text( oData['Dcode'], pos_x, pos_y, { width: 140, align: 'left' } )
 			 .text( oData['NoFiles'], pos_x*4, pos_y, { width: 18, align: 'right' } )
 			 .text( oData['Count'], pos_x*4.4, pos_y, { width: 18, align: 'right' } )
 

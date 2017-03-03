@@ -216,7 +216,6 @@ exports.expireMessage = function(req, res) {
 
 exports.doReverse = function(req, res) {
     var [ sqlRequest, sqlModel, GVM  ] = require('./sqlSetup')(req, res);
-        console.log('sqlRequest',sqlRequest);
 
     var updateDealerStatus = [];
     var updateSqlFile = [];
@@ -266,8 +265,8 @@ exports.pdfBrowser = function(req, res) {
 
 exports.getStatusData = function(req, res) {
     var fs = require('fs');
-    var GVM = res.locals;
-    var sqlModel  = require('../sqlModel');    
+    var [ sqlRequest, sqlModel, GVM ] = require('./sqlSetup')(req, res);
+
     var userTable = req.params['woDir'];
     qStmnt =`SELECT WorkOrder, Dealercode, count, printCount, ( printCount - count) as val FROM ${userTable} group by dealercode`;
 
