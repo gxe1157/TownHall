@@ -87,7 +87,7 @@ var prepareData = function (query){
     var arrLen    = _('arrlength').value;
     var printData = [];
     var townCode  = [];
-    var setCount, count, printed, reprint;
+    var setCount, count, printed, reprint, expireMess;
     arrLen++;
 
     for( var i = 1; i<arrLen; i++){
@@ -95,11 +95,12 @@ var prepareData = function (query){
          printed  = +_('printed'+i).innerHTML;
          reprint  = +_('reprint'+i).innerHTML;
          townCode = _('twn'+i).innerHTML.split("|");
-
+         expireMess = _('respLine'+i).innerHTML;
+         expireMess = ( expireMess.substr(0, 4) == '....' ) ? expireMess.substr(5, 40) : expireMess;
          setCount = printed < count ? +count + +reprint : +reprint;
 
          if(  ( _('chkBx'+i).checked == true && setCount > 0 ) || ( query == 'doReverse' && _('chkBx'+i).checked == true ) )
-            printData.push( `${townCode[0]}|${setCount}|${printed}|${_('fileCnt'+i).innerHTML}|${i}|${ _('RecNo'+i).value }` );
+            printData.push( `${townCode[0]}|${setCount}|${printed}|${_('fileCnt'+i).innerHTML}|${i}|${ _('RecNo'+i).value }|${expireMess}` );
     }
 
     return printData;
@@ -109,6 +110,7 @@ var process = function( routeOpt ){
     var query = routeOpt || null;
 
     var printData = prepareData(query);
+
     if( printData.length > 0){
         var data = '/'+routeOpt+'/'+_('workOrder').value+'/'+_('dealerCode').value+'/'+_('selReport').value+'/'+printData.toString();
         ajaxFusionPro(data);

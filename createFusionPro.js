@@ -26,6 +26,9 @@ module.exports = function(data, res) {
     var workOrder  = data.workOrder;
     var dealerCode = data.dealerCode;
     var jobDir     = data.jobDir;
+
+    var today   =  GVM.getDate();
+    var dirName = __dirname.split('\\').join('\\\\');
     // var selectedFileName = data.selectedFileName;
 
     /* path to sqlite3 dbf */
@@ -80,49 +83,36 @@ module.exports = function(data, res) {
          return ln.split('-', x).join(' ').replace(/\s+/g, '-');
     }
 
-    var writeToFile = function( oProduct, oCount, RecNo, idNum ){
-        var stdOut, fileName;
-        var array   = objProduct[oProduct];
-        var today   =  GVM.getDate();
+    var writeToFile = function( oProduct, oCount, RecNo, idNum, expireMess ){
+        var stdOut;
+        var array = objProduct[oProduct];
 
-        var promoName = jobDir
-
-        var data   = ({ code      : oProduct,
+        var data  = ({ code      : oProduct,
                         promoType : joinLines(jobDir,1),
                         town      : objProduct[oProduct][0],
                         printDate : today,
                         workOrder : workOrder,
                         printTotal: `${oCount} sets | ${array.length} cards`,
                         fileOutput: `${oProduct}-${jobDir}-SS.pdf`
-                     });
-                     // console.log('data',data);
+                    });
+                    // console.log('data',data);
 
-        sqlModel.findById( 'RecNo', RecNo )
-            .then(function( results ) { // records found
-                let expireMess = results[0].expireMessage;
-                let dirName = __dirname.split('\\').join('\\\\');
+        for ( var x = 0; x < oCount; x++ ){
+            // console.log(x, 'array', array,'dealerId',dealerId );
+            if( x == 0 ){
+                file.write( `Slip Sht, ${oProduct},${ data.fileOutput},,,,,${dirName},dataSource,${workOrder},${dealerCode},${jobDir}\n`);
+                pdfSlipSheets(data, myPath, idNum);
+            }
 
-                for ( var x = 0; x < oCount; x++ ){
-                    // console.log(x, 'array', array,'dealerId',dealerId );
-                    if( x == 0 ){
-                        file.write( `Slip Sht, ${oProduct},${ data.fileOutput},,,,,${dirName},dataSource,${workOrder},${dealerCode},${jobDir}\n`);
-                        pdfSlipSheets(data, myPath, idNum);
-                    }
+            for ( var i = 0; i < array.length; i++){
+                stdOut =`${x+1}, ${oProduct}, ${array[i]}, workOrder, jobTitle, ${today}, ${expireMess},${dirName},dataSource,${workOrder},${dealerCode},${jobDir}\n`;
+                // console.log('**sets: ',stdOut);
+                file.write(stdOut);
+                /* Move first occurance of files to done sub directory */
+                // if( x == 0 ) moveFiles(array[i]);
+            }
+        }
 
-                    for ( var i = 0; i < array.length; i++){
-                        stdOut =`${x+1}, ${oProduct}, ${array[i]}, workOrder, jobTitle, ${today}, ${expireMess},${dirName},dataSource,${workOrder},${dealerCode},${jobDir}\n`;
-                        // console.log('**sets: ',stdOut);
-                        file.write(stdOut);
-                        /* Move first occurance of files to done sub directory */
-                        // if( x == 0 ) moveFiles(array[i]);
-                    }
-                }
-
-            })
-            .catch(function( results ) {
-                console.log('Failed ....',  results );
-                process.exit(1);
-            })
     }
 
     /* ------------------- */
@@ -156,13 +146,13 @@ module.exports = function(data, res) {
 
         printFiles.forEach(function(entry) {
             printStatus = 'PDF Not Found';
-            var [ dealerId, setCount,printed,nofiles, respIndex, RecNo ] = entry.split('|');
+            var [ dealerId, setCount,printed,nofiles, respIndex, RecNo, expireMess ] = entry.split('|');
             dealerId = dealerId.toUpperCase().replace(/\s+/g, '');
             /* Check to see if PDF property exixt in object of directory list*/
             if(objProduct.hasOwnProperty(dealerId)){
-               // console.log("Processing.......... "+ dealerId+" | "+setCount);
+               // console.log("Processing.......... "+ dealerId+" | "+setCount, expireMess);
                /* write to csv file */
-               writeToFile( dealerId, setCount, RecNo, idNum );
+               writeToFile( dealerId, setCount, RecNo, idNum, expireMess );
                var printCount = +setCount + +printed;
                updateSqlFile.push(`Completed :${batchNumber}|${ GVM.getDate()}|0|${printCount}|${batchNumber}|${RecNo}`);
                updateDealerStatus.push(`Completed :${batchNumber} | ${ GVM.getDate()} | 0 |${printCount} | ${respIndex}|${RecNo}|${dealerId}`);
