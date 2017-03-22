@@ -128,14 +128,14 @@ exports.reportPDF = function(req, res) {
     importData( res, req.params )
         .then(function( results ) {
             if( req.params['query'] == 'SD7' )
-                var pdfReport = require('../pdfCheckList');                          
+                var pdfReport = require('../pdfCheckList');
             else
-                var pdfReport = require('../pdfReport');          
+                var pdfReport = require('../pdfReport');
 
-            pdfReport(req, res);          
+            pdfReport(req, res);
         })
         .catch(function( results ) {
-            res.send( `File not found` );                 
+            res.send( `File not found` );
         })
 };
 
@@ -167,7 +167,7 @@ exports.dropFromTable = function(req, res) {
                           workOrder  : req.body.workOrder,
                           allJobDir  : req.body.allJobDir,
                           jobDirSelected  : req.body.jobDirSelected,
-                          output     :  'fromPostToScreen'                        
+                          output     :  'fromPostToScreen'
                         });
 
             sqlModel.delete( datasource, fldnames );
@@ -193,7 +193,7 @@ exports.addRemoveTown = function(req, res) {
             dataUpdate.push( `null|${sqlRequest.dcode}|${sqlRequest.city}|${sqlRequest.zip}|${sqlRequest.count}|${sqlRequest.workOrder}|${sqlRequest.dealerCode}|user|0|${allDir[i]}|....|${GVM.getDate()}|0|0|||${GVM.getDate()}`);
 
         sqlModel.insert( dataUpdate );
-    } 
+    }
     else{
         var fldnames   = 'RecNo';
         var dataUpdate = sqlRequest.recNo;
@@ -205,10 +205,10 @@ exports.addRemoveTown = function(req, res) {
 
 
 exports.expireMessage = function(req, res) {
-    var [ sqlRequest, sqlModel, GVM  ] = require('./sqlSetup')(req, res);    
+    var [ sqlRequest, sqlModel, GVM  ] = require('./sqlSetup')(req, res);
 
     var fldnames   = ['expireMessage'];
-    
+
     var dataUpdate = sqlRequest['updateData'].split(',');
     sqlModel.update( dataUpdate, fldnames );
     res.send(dataUpdate.toString() );
@@ -223,23 +223,23 @@ exports.doReverse = function(req, res) {
 
     var sqlUpdate = function( data ) {
         /* read req params and update sql */
-        var fs = require('fs');        
+        var fs = require('fs');
         var cnt = 0;
         var printFiles = data.printData.split(",");
 
         printFiles.forEach(function(entry) {
-            var [ findProduct, setCount,printed,nofiles, respIndex, RecNo ] = entry.split('|');    
+            var [ findProduct, setCount,printed,nofiles, respIndex, RecNo ] = entry.split('|');
             deletePDF_SS.push(`${findProduct.trim()}-${data.jobDir}-SS.pdf`);
             updateSqlFile.push(`....|${ GVM.getDate()}|0|0| |${RecNo}`);
             updateDealerStatus.push(`....| ${ GVM.getDate()} | 0 | 0 |${respIndex}|${RecNo}|${findProduct}`);
         });
-            
+
         deletePDF_SS.forEach(function(entry) {
             fs.unlink(`./datasource/${data.workOrder}/${data.dealerCode}/${data.jobDir}/${entry}`, (err) => {
               if (err) console.log( 'error: '+entry+' | ', err);
             });
         });
-            
+
         var flds = ['Status', 'ModDate', 'Reprint', 'PrintCount', 'BatchNo '];
         sqlModel.update( updateSqlFile, flds);
         res.send( updateDealerStatus.toString() );
@@ -273,10 +273,11 @@ exports.getStatusData = function(req, res) {
     sqlModel.select( qStmnt, userTable, GVM )
         .then(function( results ) { // records found
             res.contentType("application/JSON");
-            res.end( JSON.stringify(results) );             
+            res.end( JSON.stringify(results) );
         })
         .catch(function( results ) {
-            res.end("Page is FOUND !! ..... ");        
+            res.contentType("application/JSON");          
+            res.end("SQL not FOUND");
             // process.exit(1);
         });
 }

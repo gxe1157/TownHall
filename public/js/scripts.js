@@ -78,9 +78,9 @@ var checkCountPrinted = function( actionState ) {
         _('dropTable').innerHTML = `&nbsp;&nbsp;&nbsp;<button class="btn btn-xsm btn-danger btn-inline-block "
          type="button" onclick= " validate_delete('post', 'dropTable')">Delete File </button>`;
     } else {
-        _('dropTable').innerHTML = '';            
+        _('dropTable').innerHTML = '';
     }
-        
+
 }
 
 var prepareData = function (query){
@@ -209,7 +209,7 @@ var buildSelOpt = function( selName, arrSel, results ){
             if( results != null && results[ arrSel[i] ] != undefined ){
                 _(selName).options[i].style.color = results[ arrSel[i] ] == 0 ? '#000' : 'red';
                 _(selName).options[0].style.color = '#000';
-            }    
+            }
         }
     }
 }
@@ -342,7 +342,7 @@ var validate_delete = function( myMethod, myAction ) {
       var confirmMess = `You are about to delete ${ _('sqlDcode').value }.`;
     } else {
       var confirmMess = `You are about to drop the databse.`;
-    } 
+    }
 
     var r = confirm( confirmMess );
     if (r == false) {
@@ -428,20 +428,26 @@ var validate_report = function( myMethod, myAction ){
 
 var ajaxStatus = function( data ) {
     var oDC = {};
-    
+
     return new Promise(function (resolve, reject) {
       var xhttp_status = new XMLHttpRequest();
       xhttp_status.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200) {
             var resp = this.responseText;
-            var arr_from_json = JSON.parse( resp );
-            var name = '';
-            for( var line in arr_from_json){
-                Dname = arr_from_json[line].DealerCode;              
-                oDC[ Dname ] = arr_from_json[line].val >= 0 ? 1: 0;
+
+            if ( resp !== 'SQL not FOUND' ) {
+                var arr_from_json = JSON.parse( resp );
+                var name = '';
+                for( var line in arr_from_json){
+                    Dname = arr_from_json[line].DealerCode;
+                    oDC[ Dname ] = arr_from_json[line].val >= 0 ? 1: 0;
+                }
+                console.log( 'oDC', oDC );
+                resolve( oDC );
+            } else{
+                resolve( null );
             }
-            console.log( oDC );
-            resolve( oDC );          
+
           }
       };
 
@@ -544,7 +550,7 @@ var ajaxFusionPro = function(data){
                _('TotalCount').innerHTML = null;
           }
           $('#selReport').click();
-          checkCountPrinted('SD1');                    
+          checkCountPrinted('SD1');
       }
     };
 
@@ -588,13 +594,13 @@ var ajaxReq =  function(data, query){
 
           _('bodyResponse').innerHTML = newTable;
           _('arrlength').value = lineNumber;
-          
+
           /* Update showSel if SD option is present */
-          if( query.indexOf( 'SD' ) != -1 ) _('showSel').innerHTML = `${_(query).innerHTML} [${lineNumber}]`;;          
+          if( query.indexOf( 'SD' ) != -1 ) _('showSel').innerHTML = `${_(query).innerHTML} [${lineNumber}]`;;
 
           chkBoxScan( 'init', null);
           $('#selReport').click();
-          checkCountPrinted(query);        
+          checkCountPrinted(query);
         }
 
     };
