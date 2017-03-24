@@ -135,15 +135,17 @@ var actionSelect = function( routeOpt ){
 
             /* Prepare as expireMess+'|'+recno */
             updateData.forEach(function(entry) {
-                recNo = entry.split("|").pop();
+                var [ dealerId, setCount,printed,nofiles, respIndex, recNo, expireMess ] = entry.split('|');
                 updateSqlFile.push(`${_('expireMess').value}|${recNo}`);
             });
+
             var data = '/expireMessage/'+_('workOrder').value+'/'+updateSqlFile.toString();
-            ajaxExpireMess(data);
+
+            ajaxExpireMess(data, updateData, _('expireMess').value );
             return;
         }else{
             alert( 'No files were selected for processing.\nClick the checkbox next the file you wish to print.' );
-            return false;
+            return;
         }
 
     } else {
@@ -505,24 +507,23 @@ var ajaxIsFileImported = function(data, myMethod, myAction, mode, uploadName){
     xhttp.send();
 }
 
-var ajaxExpireMess = function(data){
+var ajaxExpireMess = function(data, updateData, newExpireMess ){
     var xhttp_updt = new XMLHttpRequest();
     // alert( "readyState: "+this.readyState+" | status: "+this.status );
     xhttp_updt.onreadystatechange = function() {
+
       if (this.readyState == 4 && this.status == 200) {
           var resp = this.responseText;
-          var reply = resp.split(",");
-
-          var lineNumber = 0;
-          for( var line in reply ){
-               var [ response, lineNumber ] = reply[line].split('|');
-               _( 'respLine'+lineNumber ).innerHTML = `.... ${ response.trim() }`;
-               _(`chkBx${lineNumber}`).checked = false;
-               _(`pages${lineNumber}`).innerHTML = null;
+          updateData.forEach(function(entry) {
+              var [ dealerId, setCount,printed,nofiles, respIndex, recNo, expireMess ] = entry.split('|');
+               _( 'respLine'+respIndex ).innerHTML = `.... ${ newExpireMess.trim() }`;
+               _(`chkBx${respIndex}`).checked = false;
+               _(`pages${respIndex}`).innerHTML = null;
                _('TotalCount').innerHTML = null;
-          }
+          });
           $('#selReport').click();
       }
+
     };
 
     xhttp_updt.open( "GET", data, true);

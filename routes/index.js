@@ -211,7 +211,7 @@ exports.expireMessage = function(req, res) {
 
     var dataUpdate = sqlRequest['updateData'].split(',');
     sqlModel.update( dataUpdate, fldnames );
-    res.send(dataUpdate.toString() );
+    res.send('Success');
 };
 
 exports.doReverse = function(req, res) {
@@ -276,7 +276,7 @@ exports.getStatusData = function(req, res) {
             res.end( JSON.stringify(results) );
         })
         .catch(function( results ) {
-            res.contentType("application/JSON");          
+            res.contentType("application/JSON");
             res.end("SQL not FOUND");
             // process.exit(1);
         });
