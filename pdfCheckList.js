@@ -14,8 +14,8 @@ var fs = require("fs");
 	sqlModel.init( userTable, GVM.sqlFileName);
 	var userTable = sqlRequest.workOrder;
 
-    /* PDF setup */
-    var pos_x = 0, pos_y = 0, moveLine = 20;
+  /* PDF setup */
+  var lineCount = 0; pos_x = 0, pos_y = 0, moveLine = 20;
 	var myDoc = new pdf({
 		// by default, all are 72 pixes/inch
 	    bufferPages: true,
@@ -53,20 +53,23 @@ var fs = require("fs");
 			myDoc.text( 'Status', pos_x*5.5, pos_y, { width: 144, align: 'left' } )
 		    	 .text( '', pos_x*7, pos_y, { width: 50, align: 'right' } );
 
-    }
+		  pos_x = 72, pos_y = 144;
 
-    var pdfLine = function( showLine ){
+  }
+
+  var pdfLine = function( showLine ){
     	if( oData['ModDate'] == null ) oData['ModDate'] = '';
 
-		myDoc.font('Times-Roman')
-			 .fontSize(10)
-			 .text( oData['Dcode'], pos_x, pos_y, { width: 140, align: 'left' } )
-			 .text( oData['NoFiles'], pos_x*4, pos_y, { width: 18, align: 'right' } )
-			 .text( oData['Count'], pos_x*4.4, pos_y, { width: 18, align: 'right' } )
+			myDoc.font('Times-Roman')
+				 .fontSize(10)
+				 .text( pos_y+' '+oData['Dcode'], pos_x, pos_y, { width: 140, align: 'left' } )
+				 .text( oData['NoFiles'], pos_x*4, pos_y, { width: 18, align: 'right' } )
+				 .text( oData['Count'], pos_x*4.4, pos_y, { width: 18, align: 'right' } )
 
-		if(showLine == true){	 
-		    myDoc.text( oData['BatchNo'], pos_x*5.5, pos_y, { width: 144, align: 'left' } );
-	 	}	 
+			if(showLine == true){
+			    myDoc.text( oData['BatchNo'], pos_x*5.5, pos_y, { width: 144, align: 'left' } );
+					lineCount++;
+		 	}
 	}
 
 
@@ -83,23 +86,23 @@ var fs = require("fs");
 
 		var headerTag = rowData[0].PromoType;
 		pdfHeader( headerTag );
-		pos_x = 72, pos_y = 144;
-		var lineCount = 0, pages = 0, lineDn = 12;
-        var chkMatch = '';
-        var showLine = true;
+
+		var pages = 0, lineDn = 12;
+    var chkMatch = '';
+    var showLine = true;
 
 		for( var line in rowData ){
 			lineCount++;
 			oData = rowData[line];
 
-            // if( line == 0 ) chkMatch = oData['BatchNo'];
-            if( chkMatch != oData['BatchNo'] ){
-            	chkMatch = oData['BatchNo'];
-				showLine = true;
-				pos_y += lineDn;
-            } else {
-				showLine = false;			
-            }
+			// if( line == 0 ) chkMatch = oData['BatchNo'];
+			if( chkMatch != oData['BatchNo'] ){
+			  	chkMatch = oData['BatchNo'];
+					showLine = true;
+					pos_y += line == 0 ? 0: lineDn; // on line = 0  do not increaese pos_y
+			} else {
+					showLine = false;
+			}
 
 			if( lineCount > 49  || headerTag != oData['PromoType']){
 				// myDoc.text( 'Continued on next page...', 0, pos_y+lineDn, { width: 612, align: 'center' } );
@@ -107,7 +110,6 @@ var fs = require("fs");
 				headerTag = oData['PromoType'];
 				myDoc.addPage();
 				pdfHeader( headerTag );
-				pos_x = 72, pos_y = 144;
 				pages++;
 			}
 			pdfLine( showLine );
@@ -122,8 +124,9 @@ var fs = require("fs");
 					.lineTo( 540, 748)
 					.stroke();
 
-			myDoc.fontSize( 16 )
+   		myDoc.fontSize( 16 )
 				 .text( `Page ${pg+1} of ${pages+1}`, 0, 756, { width: 612, align: 'center' } );
+
 		}
 
 		/* Close create PDF */
