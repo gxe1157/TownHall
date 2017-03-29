@@ -268,7 +268,7 @@ exports.getStatusData = function(req, res) {
     var [ sqlRequest, sqlModel, GVM ] = require('./sqlSetup')(req, res);
 
     var userTable = req.params['woDir'];
-    qStmnt =`SELECT WorkOrder, Dealercode, count, printCount, ( printCount - count) as val FROM ${userTable} group by dealercode`;
+    qStmnt =`SELECT WorkOrder, Dealercode, count, printCount, sum( printCount - count) as val FROM ${userTable} group by dealercode`;
 
     sqlModel.select( qStmnt, userTable, GVM )
         .then(function( results ) { // records found

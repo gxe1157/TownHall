@@ -203,15 +203,20 @@ var getKeyData = function(){
 }
 
 var buildSelOpt = function( selName, arrSel, results ){
+  console.log('results', results);
+
     if( document.getElementById(selName) ){
         _(selName).options.length = 0;
         for( var i in arrSel){
             _(selName).options[i] = new Option( arrSel[i] );
+            // console.log( arrSel[i], results[ arrSel[i] ] );
 
             if( results != null && results[ arrSel[i] ] != undefined ){
+                _(selName).options[i].style.fontWeight = results[ arrSel[i] ] == 0 ? 'bold' : 'regular';
                 _(selName).options[i].style.color = results[ arrSel[i] ] == 0 ? '#000' : 'red';
                 _(selName).options[0].style.color = '#000';
             }
+
         }
     }
 }
