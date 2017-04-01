@@ -29,7 +29,7 @@ window.onload = function() {
     oJobDir  = JSON.parse(document.getElementById("dc").value);
   }
 
-  if(  _('TotalCount') )  chkBoxScan( 'init', null );
+  if( _('TotalCount') )  chkBoxScan( 'init', null );
   if( _('jobDirSelected') ) _('selReport').value = _( 'jobDirSelected' ).value ;
   if( _('arrlength') ) checkCountPrinted('SD1');
 

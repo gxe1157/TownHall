@@ -58,20 +58,35 @@ module.exports = function (res, data) {
     }
 
     var newJersey = function(){
-      let delim = ' --------------------- ';
-      let line = '', code = '', city = '';
-      let fileBegin = false;
-      let x = 0, count = 0, fldLength = 0;
-      let flds = [];
+        let delim = '---';
+        let line = '', code = '', city = '';
+        let fileBegin = false;
+        let x = 0, nextChar = 0; count = 0, n = 0;
+        let flds = [];
+        let chkLine = '';
 
         for ( var i = 1; i < lines.length; i++) {
             line='';
+            chkLine = lines[i].trim();
 
-            if( lines[i].indexOf( 'City' ) != -1 ) fileBegin = true;
-            if( lines[i].indexOf( delim ) != -1 ) line = lines[i];
+            if( chkLine.indexOf( 'City' ) != -1 ) fileBegin = true;
+            if( chkLine.indexOf( delim ) != -1 && chkLine.search( delim ) != 0 ){
+                if( delim == '---' ) {
+                    /* exspand delim */                    
+                    n = chkLine.search( delim )
+                    delim = '';
+                    do {
+                        delim += '-';
+                        nextChar++;
+                    }
+                    while( chkLine.substr( n + nextChar, 1 ) == '-' );
+                }
+                line = chkLine;
+            }     
 
-            // If fileBegin = true and these 2 flds are not empty then save to newLine array
+            // If fileBegin = true and line is not empty then save to newLine array
             if( fileBegin && line.length > 0 ){
+                console.log( 'line', line );
                 x++;
                 flds  = line.split(delim);
                 city  = flds[0].trim();
@@ -80,8 +95,8 @@ module.exports = function (res, data) {
                 hoc   = ''; // home owner cert - H01, H02 ....
                 newLines.push( `${x}, ${city}, ${code},${hoc},${count}` );
             }
-        }
-
+        } // end for
+ 
         /* Create file of new jersey Cities csv format */
         let outPutFile  = `${myPath}/arrTown.csv`;
         var file   = fs.createWriteStream(outPutFile);
