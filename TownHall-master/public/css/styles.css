@@ -1,0 +1,104 @@
+// TownHall style sheet
+// Evelio Velez Nov 13 2016
+
+/* --------------------------
+General Styles
+----------------------------- */
+body {
+	font-family: 'Montserrat', sans-serif;
+	font-weight: 400;
+	color: #333;
+}
+
+label{
+	width: 50%;
+}
+
+#user_name{
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+#csvFile{
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.selectLabel{
+   width: 100%;
+}
+
+.content-padding {
+	padding-left: 11%;
+	padding-right: 11%;
+}
+
+.title{
+	text-align: center;
+}
+
+#mess{
+	font-size: 16px;
+	color: red;
+	display: none;
+}
+
+.highlite{
+	font-weight: bold;
+	 color: #000;
+}
+
+/* Table settings */
+.tdNumeric{
+	text-align: right;
+}
+
+#TotalCount{
+	font-size: 20px;
+}
+
+.editProd{
+	width: 60%;
+}
+
+.editHeader{
+	font-size: 16px;
+	font-weight: bold;
+	color : red;
+}
+
+.headerMode{
+	font-size: 24px;
+	font-weight: bold;
+	color : #428bca;
+}
+
+
+#showSel{
+	font-size: 14px;
+	color: #ff0000;
+}
+
+#selReport{
+	width: 95%;
+}
+
+.dropDownRed{
+	color: red;
+}
+
+.dropDownBlue{
+	color: blue;
+}
+
+.dropDownGreen{
+	color: green;
+}
+
+.dropDownBold{
+	font-weight: bold;
+}
+
+/*tr:hover {
+    background-color: #ccc;
+}*/
