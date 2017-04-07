@@ -33,8 +33,8 @@ module.exports = function( myPath ){
     /* Build file list from directory, put into object */
     for ( var i = 0; i < fileLength; i++ ) {
         parseLine  = files[i].split( '-');
-        if( parseLine[2] != undefined ){
-            dealerFile = fileIsNewJersey === false ? `${parseLine[0]}-${parseLine[1]}-${parseLine[2]}` : fixTownName( parseLine[2] );
+        if( parseLine[1] != undefined ){
+            dealerFile = fileIsNewJersey === false ? `${parseLine[0]}-${parseLine[1]}-${parseLine[2]}` : fixTownName( parseLine[1] );
 
             /* Init chkMatch on first pass */
             if( i === 0 ) chkMatch = dealerFile;
