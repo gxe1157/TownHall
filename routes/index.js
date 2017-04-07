@@ -28,7 +28,7 @@ exports.pageProcess  = function(req,res){
 
     /* redirect to var pageRedirect */
     res.render( pageRedirect, {
-        title     : 'Town Hall Dealer Packs',
+        title     : `Town Hall Dealer Packs`,
         user_name :  user_name,
         workOrder :  workOrders,
         dc        :  allWorkOrders,
@@ -95,9 +95,9 @@ exports.getOrder = function(req,res){
     var csvImport  = require('../csvImport');
     var importData = require('../isImported');
 
-  	var data = ({ selectedFileName	: req.body.csvFile,
+  	var data = ({ selectedFileName : req.body.csvFile,
                   dealerCode : req.body.dealerCode,
-                  jobDir	 : req.body.jobDir,
+                  jobDir	   : req.body.jobDir,
                   workOrder  : req.body.workOrder,
                   allJobDir  : req.body.allJobDir,
                   mode       : req.body.mode

@@ -69,6 +69,7 @@ module.exports = function(req, res) {
   /* Read directory */
   var getFiles   = require('./dirFiles');
   var oFileNames = getFiles(myPath);
+console.log('oFileNames', oFileNames)
 
 
   var updateSQL = function( rowData, rowLength ){
@@ -154,7 +155,7 @@ module.exports = function(req, res) {
               jobDir    : arrJobDir,
               rowData   : rowData,
               rowLength : rowLength,
-              groupBy   : sqlRequest['dealerCode'].toUpperCase() == '_NEWJERSEY' ? true : false                 
+              groupBy   : sqlRequest['dealerCode'].toUpperCase() == '_NEWJERSEY' ? true : false
             });
             break;
 
