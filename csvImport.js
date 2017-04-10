@@ -72,7 +72,7 @@ module.exports = function (res, data) {
             if( chkLine.indexOf( 'City' ) != -1 ) fileBegin = true;
             if( chkLine.indexOf( delim ) != -1 && chkLine.search( delim ) != 0 ){
                 if( delim == '---' ) {
-                    /* exspand delim */                    
+                    /* exspand delim */
                     n = chkLine.search( delim )
                     delim = '';
                     do {
@@ -82,21 +82,21 @@ module.exports = function (res, data) {
                     while( chkLine.substr( n + nextChar, 1 ) == '-' );
                 }
                 line = chkLine;
-            }     
+            }
 
             // If fileBegin = true and line is not empty then save to newLine array
             if( fileBegin && line.length > 0 ){
                 console.log( 'line', line );
                 x++;
                 flds  = line.split(delim);
-                city  = flds[0].trim();
+                city  = flds[0].replace(/\s/g, '');
                 code  = '';
                 count = flds[1].substr( -4, 4 ).replace(/\s/g, '');
                 hoc   = ''; // home owner cert - H01, H02 ....
                 newLines.push( `${x}, ${city}, ${code},${hoc},${count}` );
             }
         } // end for
- 
+
         /* Create file of new jersey Cities csv format */
         let outPutFile  = `${myPath}/arrTown.csv`;
         var file   = fs.createWriteStream(outPutFile);
