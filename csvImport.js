@@ -24,6 +24,10 @@ module.exports = function (res, data) {
     var fileImport =`./dataSource/${workOrder}/${dealerCode}/${selectedFileName}`;
     var myPath     =`./dataSource/${workOrder}/${dealerCode}`;
 
+
+    var nhoImport =`./lib/sqlite/TH-Worksheet.csv`;
+    var dataOut = {};
+
     fs.open('fileImport','r',function(err,fd){
         if (err && err.code=='ENOENT') { /* file doesn't exist */ }
     });
@@ -57,7 +61,28 @@ module.exports = function (res, data) {
 
     }
 
-    var newJersey = function(){
+    readFileAsync = function( nhoImport ) {
+        return new Promise(function(resolve, reject) {
+
+            fs.readFile( nhoImport,  function(err, data){
+                var arrData = data.toString('utf8').split('\r\n');
+                for ( var i = 0; i < arrData.length; i++) {
+                      var [ key, value ] = arrData[i].toUpperCase().split(',');
+                      dataOut[ key ] = value;
+                }
+
+                if (err) {
+                    reject(console.log('err',err) ); 
+                } else { 
+                    resolve( dataOut );
+                }    
+            });
+
+        });
+
+    }; // end reaFilesAsync
+
+    var newJersey = function( nho ){
         let delim = '---';
         let line = '', code = '', city = '';
         let fileBegin = false;
@@ -86,14 +111,13 @@ module.exports = function (res, data) {
 
             // If fileBegin = true and line is not empty then save to newLine array
             if( fileBegin && line.length > 0 ){
-                console.log( 'line', line );
                 x++;
                 flds  = line.split(delim);
+                hoc   = nho[ flds[0].trim() ]; // home owner cert - H01, H02 ....                
                 city  = flds[0].replace(/\s/g, '');
                 code  = '';
                 count = flds[1].substr( -4, 4 ).replace(/\s/g, '');
-                hoc   = ''; // home owner cert - H01, H02 ....
-                newLines.push( `${x}, ${city}, ${code},${hoc},${count}` );
+                newLines.push( `${x}, ${city}, ${hoc}, ${code}, ${count}` );
             }
         } // end for
 
@@ -209,11 +233,19 @@ module.exports = function (res, data) {
         callback( placeHolder );
     }
 
-    if( dealerCode.toUpperCase() == '_NEWJERSEY')
-        newJersey();
-    else
-        dealerPacks();
+    if( dealerCode.toUpperCase() == '_NEWJERSEY'){
+        readFileAsync(nhoImport)
+            .then(function( results ) { // records found
+                newJersey( results );                    
+                tableStructure( importCSV );                 
+            })
+            .catch(function( results ) {
+              console.log('New Jersey Import Failed............ ');
+            });
 
-    tableStructure( importCSV );
+    } else {
+        dealerPacks();
+        tableStructure( importCSV );        
+    }
 
 }//End runApp
