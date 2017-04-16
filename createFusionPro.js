@@ -58,14 +58,20 @@ module.exports = function(data, res) {
     var batchNo = function(){
         var [ todayIs, timeNow ] = dateParams();
         todayIs = todayIs.length== 7 ? '0'+todayIs.substr(0,7) : todayIs;
-        return todayIs.slice(0,4)+'-'+timeNow;
+        return todayIs.slice(4,8)+'-'+timeNow;
     }
 
     var dateParams = function(){
-        var d = new Date();
-        /* deconstruct array */
-        var todayIs = d.toLocaleDateString().replace(/\/+/g, '');
-        var timeNow = d.toTimeString().slice(0, 8).split(':', 3).join(' ').replace(/\s+/g, '-'); ;
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth()+1; //January is 0!
+        var yyyy = today.getFullYear();
+
+        if(dd<10) dd='0'+dd;
+        if(mm<10) mm='0'+mm;
+        todayIs = yyyy+mm+dd;
+        // var todayIs = d.toLocaleDateString().replace(/\/+/g, '');
+        var timeNow = today.toTimeString().slice(0, 8).split(':', 3).join(' ').replace(/\s+/g, '-'); ;
         return [ todayIs, timeNow ];
     }
 
@@ -83,10 +89,13 @@ module.exports = function(data, res) {
          return ln.split('-', x).join(' ').replace(/\s+/g, '-');
     }
 
-    var writeToFile = function( oProduct, oCount, RecNo, idNum, expireMess ){
-        var stdOut;
-        var array = objProduct[oProduct];
+    var writeToFile = function( oProduct, oCount, RecNo, idNum, expireMess, njHomeOwners ){
+        var stdOut, N1, N2;
 
+        if( dealerCode.toUpperCase() == '_NEWJERSEY' )
+            [ N1, N2 ] = njHomeOwners.split('_'); 
+
+        var array = objProduct[oProduct];
         var data  = ({ code      : oProduct,
                         promoType : joinLines(jobDir,1),
                         town      : objProduct[oProduct][0],
@@ -111,6 +120,14 @@ module.exports = function(data, res) {
                 /* Move first occurance of files to done sub directory */
                 // if( x == 0 ) moveFiles(array[i]);
             }
+
+            if( dealerCode.toUpperCase() == '_NEWJERSEY' && x == N2-1 ){
+                for( var cnt = 0; cnt < N2; cnt++ ) {
+                    stdOut =`${cnt+1}, ${oProduct}, ${N1}.pdf, workOrder, jobTitle, ${today}, ${expireMess},${dirName},dataSource,${workOrder},${dealerCode},${jobDir}\n`;
+                    file.write(stdOut);        
+                }                    
+            }
+
         }
 
     }
@@ -146,13 +163,13 @@ module.exports = function(data, res) {
 
         printFiles.forEach(function(entry) {
             printStatus = 'PDF Not Found';
-            var [ dealerId, setCount,printed,nofiles, respIndex, RecNo, expireMess ] = entry.split('|');
+            var [ dealerId, setCount,printed,nofiles, respIndex, RecNo, expireMess, njHomeOwners ] = entry.split('|');
             dealerId = dealerId.toUpperCase().replace(/\s+/g, '');
             /* Check to see if PDF property exixt in object of directory list*/
             if(objProduct.hasOwnProperty(dealerId)){
                // console.log("Processing.......... "+ dealerId+" | "+setCount, expireMess);
                /* write to csv file */
-               writeToFile( dealerId, setCount, RecNo, idNum, expireMess );
+               writeToFile( dealerId, setCount, RecNo, idNum, expireMess, njHomeOwners );
                var printCount = +setCount + +printed;
                updateSqlFile.push(`Completed :${batchNumber}|${ GVM.getDate()}|0|${printCount}|${batchNumber}|${RecNo}`);
                updateDealerStatus.push(`Completed :${batchNumber} | ${ GVM.getDate()} | 0 |${printCount} | ${respIndex}|${RecNo}|${dealerId}`);

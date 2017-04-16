@@ -91,16 +91,24 @@ var prepareData = function (query){
     arrLen++;
 
     for( var i = 1; i<arrLen; i++){
+         setCount = 0;
          count    = +_('setCnt'+i).innerHTML;
          printed  = +_('printed'+i).innerHTML;
          reprint  = +_('reprint'+i).innerHTML;
          townCode = _('twn'+i).innerHTML.split("|");
+            
+
          expireMess = _('respLine'+i).innerHTML;
          expireMess = ( expireMess.substr(0, 4) == '....' ) ? expireMess.substr(5, 40) : expireMess;
-         setCount = printed < count ? +count + +reprint : +reprint;
+
+         if( +_('fileCnt'+i).innerHTML == 0 && _('chkBx'+i).checked == true ) {
+             _('respLine'+i).style.background = 'yellow';
+         } else {
+             setCount = printed < count ? +count + +reprint : +reprint;
+         } 
 
          if(  ( _('chkBx'+i).checked == true && setCount > 0 ) || ( query == 'doReverse' && _('chkBx'+i).checked == true ) )
-            printData.push( `${townCode[0]}|${setCount}|${printed}|${_('fileCnt'+i).innerHTML}|${i}|${ _('RecNo'+i).value }|${expireMess}` );
+            printData.push( `${townCode[0]}|${setCount}|${printed}|${_('fileCnt'+i).innerHTML}|${i}|${ _('RecNo'+i).value }|${expireMess}|${townCode[1]}` );
     }
 
     return printData;
@@ -203,8 +211,6 @@ var getKeyData = function(){
 }
 
 var buildSelOpt = function( selName, arrSel, results ){
-  console.log('results', results);
-
     if( document.getElementById(selName) ){
         _(selName).options.length = 0;
         for( var i in arrSel){
@@ -262,6 +268,8 @@ var chkBox = function ( lineNum ){
     if( _( 'chkBx'+lineNum ).checked ){
         noPages  = pagesOutput(lineNum);
         _( 'pages'+lineNum).innerHTML = noPages;
+    } else {
+        if( _('respLine'+lineNum).style.background == 'yellow' ) _('respLine'+lineNum).style.background = '#fff';
     }
 
     return  noPages;

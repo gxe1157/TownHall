@@ -89,12 +89,15 @@ module.exports = function (res, data) {
         let x = 0, nextChar = 0; count = 0, n = 0;
         let flds = [];
         let chkLine = '';
+        let newHomeOwners = 0;
 
         for ( var i = 1; i < lines.length; i++) {
             line='';
             chkLine = lines[i].trim();
 
             if( chkLine.indexOf( 'City' ) != -1 ) fileBegin = true;
+            if( chkLine.indexOf( '\\NHO' ) != -1 ) newHomeOwners = GVM.removeSpaces( chkLine.substr( -4, 4 ) ); 
+
             if( chkLine.indexOf( delim ) != -1 && chkLine.search( delim ) != 0 ){
                 if( delim == '---' ) {
                     /* exspand delim */
@@ -114,10 +117,10 @@ module.exports = function (res, data) {
                 x++;
                 flds  = line.split(delim);
                 hoc   = nho[ flds[0].trim() ]; // home owner cert - H01, H02 ....                
-                city  = flds[0].replace(/\s/g, '');
-                code  = '';
-                count = flds[1].substr( -4, 4 ).replace(/\s/g, '');
-                newLines.push( `${x}, ${city}, ${hoc}, ${code}, ${count}` );
+                code  = GVM.removeSpaces( flds[0] );
+                files  = '';
+                count = GVM.removeSpaces( flds[1].substr( -4, 4 ) );
+                newLines.push( `${x}, ${code}, ${hoc}_${newHomeOwners}, ${files}, ${count}` );
             }
         } // end for
 
