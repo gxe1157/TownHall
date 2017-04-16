@@ -39,9 +39,10 @@ module.exports = function (res, data) {
     var lines = fileContents.toString('utf8').split(/\r\n|[\n\r\u0085\u2028\u2029]/g);
 
     var dealerPacks = function(){
-        var line = '';
+        var line = '', fixLine ='';
         var flds = [];
         var fileBegin = false;
+        var charLocation = 0, firstPos = 0; lastPos = 0;
 
         var x = 0;
         for ( var i = 1; i < lines.length; i++) {
@@ -52,14 +53,22 @@ module.exports = function (res, data) {
                 fileBegin = true;
 
             /* If fileBegin = true and these 2 flds are not empty then save to newLine array */
-            flds[0] = flds[0].replace(/\s/g, '');
+            flds[0] = GVM.removeSpaces(flds[0]);
             if( fileBegin && flds[0].length > 0 && flds[3].length > 0 ){
                 x++;
+                charLocation = line.indexOf( '"' );
+                if( charLocation != -1 ){
+                    firstPos = line.indexOf( '"' );
+                    lastPos = line.indexOf( '",' );
+                    fixLine = line.substring(firstPos, lastPos ).replace(/[,"]/g, '');
+                    line = line.substring(0,firstPos)+fixLine+line.substring(lastPos+1, line.length);
+                } 
                 newLines.push( `${x},${line}` );
             }
         }
-
+ 
     }
+
 
     readFileAsync = function( nhoImport ) {
         return new Promise(function(resolve, reject) {

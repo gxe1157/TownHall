@@ -10,8 +10,8 @@ module.exports =  middleware = {
             isObjEmpty  : function(obj){ return ( Object.keys(obj).length === 0 && obj.constructor === Object  );},
             removeSpaces: function(str){ return str.replace(/\s/g, ''); },
             escapeSpecialChars: function(str){ return str.replace(/[-~]*/g, ''); },
-            joinLines   : function(str){ return str.split('-', 2).join(' ').replace(" ", "-"); }
-
+            joinLines   : function(str){ return str.split('-', 2).join(' ').replace(" ", "-"); },
+            scrubData   : function(str){ return str.replace(/[^0-9a-zA-Z \- \,]/g, ""); }            
         });
         next();
     }
