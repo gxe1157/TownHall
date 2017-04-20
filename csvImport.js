@@ -62,11 +62,11 @@ module.exports = function (res, data) {
                     lastPos = line.indexOf( '",' );
                     fixLine = line.substring(firstPos, lastPos ).replace(/[,"]/g, '');
                     line = line.substring(0,firstPos)+fixLine+line.substring(lastPos+1, line.length);
-                } 
+                }
                 newLines.push( `${x},${line}` );
             }
         }
- 
+
     }
 
 
@@ -81,10 +81,10 @@ module.exports = function (res, data) {
                 }
 
                 if (err) {
-                    reject(console.log('err',err) ); 
-                } else { 
+                    reject(console.log('err',err) );
+                } else {
                     resolve( dataOut );
-                }    
+                }
             });
 
         });
@@ -105,7 +105,7 @@ module.exports = function (res, data) {
             chkLine = lines[i].trim();
 
             if( chkLine.indexOf( 'City' ) != -1 ) fileBegin = true;
-            if( chkLine.indexOf( '\\NHO' ) != -1 ) newHomeOwners = GVM.removeSpaces( chkLine.substr( -4, 4 ) ); 
+            if( chkLine.indexOf( '\\NHO' ) != -1 ) newHomeOwners = GVM.removeSpaces( chkLine.substr( -4, 4 ) );
 
             if( chkLine.indexOf( delim ) != -1 && chkLine.search( delim ) != 0 ){
                 if( delim == '---' ) {
@@ -125,7 +125,7 @@ module.exports = function (res, data) {
             if( fileBegin && line.length > 0 ){
                 x++;
                 flds  = line.split(delim);
-                hoc   = nho[ flds[0].trim() ]; // home owner cert - H01, H02 ....                
+                hoc   = nho[ flds[0].trim() ]; // home owner cert - H01, H02 ....
                 code  = GVM.removeSpaces( flds[0] );
                 files  = '';
                 count = GVM.removeSpaces( flds[1].substr( -4, 4 ) );
@@ -248,8 +248,12 @@ module.exports = function (res, data) {
     if( dealerCode.toUpperCase() == '_NEWJERSEY'){
         readFileAsync(nhoImport)
             .then(function( results ) { // records found
-                newJersey( results );                    
-                tableStructure( importCSV );                 
+                /* CREATE DIR IF NEEDED */
+                if (!isDirSync(`${myPath}/home_owners`))
+                    fs.mkdirSync(`${myPath}/home_owners`);
+
+                newJersey( results );
+                tableStructure( importCSV );
             })
             .catch(function( results ) {
               console.log('New Jersey Import Failed............ ');
@@ -257,7 +261,7 @@ module.exports = function (res, data) {
 
     } else {
         dealerPacks();
-        tableStructure( importCSV );        
+        tableStructure( importCSV );
     }
 
 }//End runApp

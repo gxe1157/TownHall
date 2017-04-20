@@ -93,7 +93,7 @@ module.exports = function(data, res) {
         var stdOut, N1, N2;
 
         if( dealerCode.toUpperCase() == '_NEWJERSEY' )
-            [ N1, N2 ] = njHomeOwners.split('_'); 
+            [ N1, N2 ] = njHomeOwners.split('_');
 
         var array = objProduct[oProduct];
         var data  = ({ code      : oProduct,
@@ -121,11 +121,11 @@ module.exports = function(data, res) {
                 // if( x == 0 ) moveFiles(array[i]);
             }
 
-            if( dealerCode.toUpperCase() == '_NEWJERSEY' && x == N2-1 ){
+            if( dealerCode.toUpperCase() == '_NEWJERSEY' && x == N2-1 ){ // New Home Owners
                 for( var cnt = 0; cnt < N2; cnt++ ) {
-                    stdOut =`${cnt+1}, ${oProduct}, ${N1}.pdf, workOrder, jobTitle, ${today}, ${expireMess},${dirName},dataSource,${workOrder},${dealerCode},${jobDir}\n`;
-                    file.write(stdOut);        
-                }                    
+                    stdOut =`${cnt+1}, ${oProduct}, ${N1}.pdf, workOrder, jobTitle, ${today}, ${expireMess},${dirName},dataSource,${workOrder},${dealerCode},${jobDir}\\\\home_owners\n`;
+                    file.write(stdOut);
+                }
             }
 
         }
@@ -137,9 +137,9 @@ module.exports = function(data, res) {
     objProduct = getFiles(myPath);
 
     /* Write to file */
-    if (!isDirSync(`${myPath}/done`)) {
-       fs.mkdirSync(`${myPath}/done`);
-    }
+    // if (!isDirSync(`${myPath}/done`)) {
+    //    fs.mkdirSync(`${myPath}/done`);
+    // }
 
     /* Create fusionpro output file */
     var outPutFile  = `${__dirname}/lib/output_data/${jobDir}-${timeStamp()}.csv`;
