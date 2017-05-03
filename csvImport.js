@@ -81,7 +81,7 @@ module.exports = function (res, data) {
                 }
 
                 if (err) {
-                    reject(console.log('err',err) );
+                    reject( err );
                 } else {
                     resolve( dataOut );
                 }
@@ -251,12 +251,13 @@ module.exports = function (res, data) {
                 /* CREATE DIR IF NEEDED */
                 if (!isDirSync(`${myPath}/home_owners`))
                     fs.mkdirSync(`${myPath}/home_owners`);
+                console.log(`${myPath}/home_owners`);
 
                 newJersey( results );
                 tableStructure( importCSV );
             })
             .catch(function( results ) {
-              console.log('New Jersey Import Failed............ ');
+              console.log('New Jersey Import Failed............ ', results);
             });
 
     } else {
