@@ -36,6 +36,8 @@ module.exports = function(data, res) {
     /* read directory */
     var getFiles  = require("./dirFiles");
     var objProduct = {};
+    var objHomeOwners = {};
+
     var writeRecordCount = 0;
 
     var isDirSync = function(aPath) {
@@ -93,7 +95,7 @@ module.exports = function(data, res) {
         var stdOut, N1, N2;
 
         if( dealerCode.toUpperCase() == '_NEWJERSEY' )
-            [ N1, N2 ] = njHomeOwners.split('_');
+            [ N1, N2 ] = njHomeOwners.replace(/\s+/g, '').split('_');
 
         var array = objProduct[oProduct];
         var data  = ({ code      : oProduct,
@@ -115,27 +117,43 @@ module.exports = function(data, res) {
 
             for ( var i = 0; i < array.length; i++){
                 stdOut =`${x+1}, ${oProduct}, ${array[i]}, workOrder, jobTitle, ${today}, ${expireMess},${dirName},dataSource,${workOrder},${dealerCode},${jobDir}\n`;
-                // console.log('**sets: ',stdOut);
                 file.write(stdOut);
-                /* Move first occurance of files to done sub directory */
-                // if( x == 0 ) moveFiles(array[i]);
+                // stdOut =`${x+1}, ${oProduct}, ${array[i]}`;
+                // console.log('**sets: ',stdOut);
             }
 
-            if( dealerCode.toUpperCase() == '_NEWJERSEY' && x == N2-1 ){ // New Home Owners
-                for( var cnt = 0; cnt < N2; cnt++ ) {
-                    stdOut =`${cnt+1}, ${oProduct}, ${N1}.pdf, workOrder, jobTitle, ${today}, ${expireMess},${dirName},dataSource,${workOrder},${dealerCode},${jobDir}\\\\home_owners\n`;
-                    file.write(stdOut);
-                }
-            }
+            /* One set after each cert set */
+            // if( dealerCode.toUpperCase() == '_NEWJERSEY' && x < N2 ){ // New Home Owners
+            //     var cnt = 1;
+            //     cnt++;
+            //     for ( var h = 0; h < objHomeOwners[N1].length; h++){
+            //         // stdOut =`${cnt+1}, ${oProduct}, ${objHomeOwners[N1][h]}.pdf, workOrder, jobTitle, ${today}, ${expireMess},${dirName},dataSource,${workOrder},${dealerCode},${jobDir}\\\\home_owners\n`;
+            //         stdOut =`${cnt+1}, ${oProduct}, ${objHomeOwners[N1][h]}.pdf`;
+            //         console.log(stdOut);
+            //         // file.write(stdOut);
+            //     }
+            // }
+        }
 
+        /* Run all sets at the end */
+        if( dealerCode.toUpperCase() == '_NEWJERSEY' && N1 !='' ){ // New Home Owners
+          for ( var x = 0; x < N2; x++ ){
+            for ( var h = 0; h < objHomeOwners[N1].length; h++){
+                stdOut =`${x+1}, ${oProduct}, ${objHomeOwners[N1][h]}.pdf, workOrder, jobTitle, ${today}, ${expireMess},${dirName},dataSource,${workOrder},${dealerCode},${jobDir}\\\\HO\n`;
+                file.write(stdOut);                
+                // stdOut =`${x+1}, ${oProduct}, ${objHomeOwners[N1][h]}.pdf`;
+                // console.log(stdOut);
+
+            }
+          }
         }
 
     }
 
     /* ------------------- */
     /* Begin main app here */
-    objProduct = getFiles(myPath);
-
+    objProduct   = getFiles(myPath);
+    objHomeOwners = getFiles(`${myPath}/HO`);
     /* Write to file */
     // if (!isDirSync(`${myPath}/done`)) {
     //    fs.mkdirSync(`${myPath}/done`);
