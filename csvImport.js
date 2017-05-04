@@ -249,9 +249,10 @@ module.exports = function (res, data) {
         readFileAsync(nhoImport)
             .then(function( results ) { // records found
                 /* CREATE DIR IF NEEDED */
-                if (!isDirSync(`${myPath}/home_owners`))
-                    fs.mkdirSync(`${myPath}/home_owners`);
                 console.log(`${myPath}/home_owners`);
+                if ( !fs.existsSync(`${myPath}/home_owners`) ) {
+                    fs.mkdirSync(`${myPath}/home_owners`);                    // Do something
+                }
 
                 newJersey( results );
                 tableStructure( importCSV );
