@@ -1,7 +1,7 @@
 // exports = module.exports;
 // Evelio Velez Jr.  Dec 13 2016
 
-module.exports = function(data, myPath, idNum) {
+module.exports = function(data, myPath, idNum, pdf_HO_info) {
 		var fs = require("fs");
 		var pdf = require("pdfkit");
 
@@ -48,6 +48,14 @@ module.exports = function(data, myPath, idNum) {
 				   .moveDown()
 				   .text( 'Print Date: '+printDate, { width: 268, align: 'center' } )
 				   .text( printTotal, { width: 268, align: 'center' } );
+
+					 if(pdf_HO_info){
+              var [hoName, sets, numCerts ] = pdf_HO_info.split('|');
+      				myDoc.fontSize(18)
+                   .moveDown(2)
+                   .text( `${hoName} : ${sets} sets | ${numCerts} cards`, { width: 268, align: 'center' } );
+           }
+
 
 				myDoc.fontSize(12)
 				   .text( `[ ${ idNum.length } Files printed in this batch.  ]`, 10, 504,  { width: 268, align: 'center' } )

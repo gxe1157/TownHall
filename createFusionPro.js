@@ -112,7 +112,13 @@ module.exports = function(data, res) {
             // console.log(x, 'array', array,'dealerId',dealerId );
             if( x == 0 ){
                 file.write( `Slip Sht, ${oProduct},${ data.fileOutput},,,,,${dirName},dataSource,${workOrder},${dealerCode},${jobDir}\n`);
-                pdfSlipSheets(data, myPath, idNum);
+                var pdf_HO_info = null;
+                if( dealerCode.toUpperCase() == '_NEWJERSEY' && N1 !='' ){
+                  pdf_HO_info = N1+'|'+N2+'|'+objHomeOwners[N1].length;
+                  console.log('** pdf_HO_info', pdf_HO_info);
+                }
+
+                pdfSlipSheets(data, myPath, idNum, pdf_HO_info );
             }
 
             for ( var i = 0; i < array.length; i++){
@@ -139,9 +145,9 @@ module.exports = function(data, res) {
         if( dealerCode.toUpperCase() == '_NEWJERSEY' && N1 !='' ){ // New Home Owners
           for ( var x = 0; x < N2; x++ ){
             for ( var h = 0; h < objHomeOwners[N1].length; h++){
-                stdOut =`${x+1}, ${oProduct}, ${objHomeOwners[N1][h]}.pdf, workOrder, jobTitle, ${today}, ${expireMess},${dirName},dataSource,${workOrder},${dealerCode},${jobDir}\\\\HO\n`;
-                file.write(stdOut);                
-                // stdOut =`${x+1}, ${oProduct}, ${objHomeOwners[N1][h]}.pdf`;
+                stdOut =`${x+1}, ${oProduct}, ${objHomeOwners[N1][h]}, workOrder, jobTitle, ${today}, ${expireMess},${dirName},dataSource,${workOrder},${dealerCode},${jobDir}\\\\HO\n`;
+                file.write(stdOut);
+                // stdOut =`${x+1}, ${oProduct}, ${objHomeOwners[N1][h]}`;
                 // console.log(stdOut);
 
             }
