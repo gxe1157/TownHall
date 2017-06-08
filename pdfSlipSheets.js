@@ -50,11 +50,11 @@ module.exports = function(data, myPath, idNum, pdf_HO_info) {
 				   .text( printTotal, { width: 268, align: 'center' } );
 
 				if(pdf_HO_info){
-                	var [hoName, sets, numCerts ] = pdf_HO_info.split('|');
-      				myDoc.fontSize(18)
-                		.moveDown(2)
-                		.text( `${hoName} : ${sets} sets | ${numCerts} cards`, { width: 268, align: 'center' } );
-           		}
+          	var [hoName, sets, numCerts ] = pdf_HO_info.split('|');
+      			myDoc.fontSize(18)
+            		.moveDown(2)
+            		.text( `${hoName} : ${sets} sets | ${numCerts} cards`, { width: 268, align: 'center' } );
+        }
 
 				myDoc.fontSize(12)
 				   .text( `[ ${ idNum.length } Files printed in this batch.  ]`, 10, 504,  { width: 268, align: 'center' } )
@@ -68,9 +68,9 @@ module.exports = function(data, myPath, idNum, pdf_HO_info) {
 
 		var createPDF_NJ = function(){
 				/* Size based on 72 pixes/inch */
-			    var w = 306, l = 396; 
+			  var w = 306, l = 396;
 				var myDoc = new pdf({
-				    size: [ 306, 396 ],
+				    size: [ 612, 396 ],
 				    margins : { // by default, all are 72
 						        top: 36,
 						        bottom:10,
@@ -87,6 +87,13 @@ module.exports = function(data, myPath, idNum, pdf_HO_info) {
 				myDoc.fontSize(22)
 				   .fillColor('red')
 				   .text( code, { width: 268, align: 'center' } );
+
+				// 	if(pdf_HO_info){
+ 			// 		var [hoName, sets, numCerts ] = pdf_HO_info.split('|');
+ 			// 		myDoc.fontSize(18)
+ 			// 		   .moveto(306, 72)
+ 			// 		   .text( `${hoName} : ${sets} sets | ${numCerts} cards`, { width: 268, align: 'center' } );
+ 			// 	}
 
 				myDoc.fontSize(14)
 				   .fillColor('#000')
@@ -110,8 +117,8 @@ module.exports = function(data, myPath, idNum, pdf_HO_info) {
 				var start = 130;
 				for ( var x = 0; x < 8; x++ ){
 					myDoc.lineCap('butt')
-						.moveTo(250, start)
-						.lineTo(390, start)
+						.moveTo(390, start)
+						.lineTo(612, start)
 						.stroke();
 
 					start += 20;
