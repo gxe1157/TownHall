@@ -49,13 +49,12 @@ module.exports = function(data, myPath, idNum, pdf_HO_info) {
 				   .text( 'Print Date: '+printDate, { width: 268, align: 'center' } )
 				   .text( printTotal, { width: 268, align: 'center' } );
 
-					 if(pdf_HO_info){
-              var [hoName, sets, numCerts ] = pdf_HO_info.split('|');
+				if(pdf_HO_info){
+                	var [hoName, sets, numCerts ] = pdf_HO_info.split('|');
       				myDoc.fontSize(18)
-                   .moveDown(2)
-                   .text( `${hoName} : ${sets} sets | ${numCerts} cards`, { width: 268, align: 'center' } );
-           }
-
+                		.moveDown(2)
+                		.text( `${hoName} : ${sets} sets | ${numCerts} cards`, { width: 268, align: 'center' } );
+           		}
 
 				myDoc.fontSize(12)
 				   .text( `[ ${ idNum.length } Files printed in this batch.  ]`, 10, 504,  { width: 268, align: 'center' } )
@@ -64,8 +63,70 @@ module.exports = function(data, myPath, idNum, pdf_HO_info) {
 
 				// Close create PDF
 				myDoc.end();
-			}
+		}
 
-			createPDF();
+
+		var createPDF_NJ = function(){
+				/* Size based on 72 pixes/inch */
+			    var w = 306, l = 396; 
+				var myDoc = new pdf({
+				    size: [ 306, 396 ],
+				    margins : { // by default, all are 72
+						        top: 36,
+						        bottom:10,
+						        left: 10,
+						        right: 0
+							  }
+			    });
+
+				myDoc.pipe(fs.createWriteStream(`${myPath}/${fileOutput}`));
+
+				myDoc.fontSize(32)
+				   .text( promoType, { width: 268, align: 'center' } );
+
+				myDoc.fontSize(22)
+				   .fillColor('red')
+				   .text( code, { width: 268, align: 'center' } );
+
+				myDoc.fontSize(14)
+				   .fillColor('#000')
+				   .moveDown()
+				   .text( 'Mail Cycle: '+workOrder, { width: 268, align: 'center' } )
+				   .moveDown(3)
+				   .text( town, { width: 240, align: 'center' } )
+				   .moveDown()
+				   .text( 'Print Date: '+printDate, { width: 268, align: 'center' } )
+				   .text( printTotal, { width: 268, align: 'center' } );
+
+				if(pdf_HO_info){
+					var [hoName, sets, numCerts ] = pdf_HO_info.split('|');
+					myDoc.fontSize(18)
+					   .moveDown(2)
+					   .text( `${hoName} : ${sets} sets | ${numCerts} cards`, { width: 268, align: 'center' } );
+				}
+
+				// draw bars on right side
+				myDoc.lineWidth(10);
+				var start = 130;
+				for ( var x = 0; x < 8; x++ ){
+					myDoc.lineCap('butt')
+						.moveTo(250, start)
+						.lineTo(390, start)
+						.stroke();
+
+					start += 20;
+				}
+
+				myDoc.fontSize(12)
+				   .text( `[ ${ idNum.length } Files printed in this batch.  ]`, 10, 330,  { width: 268, align: 'center' } )
+				   .moveDown()
+  				   .text( '     '+idNum, { width: 250, align: 'left' } );
+
+				// Close create PDF
+				myDoc.end();
+		}
+
+		createPDF_NJ();
+		//createPDF();
 
 }// End module.exports
