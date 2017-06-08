@@ -68,7 +68,6 @@ module.exports = function(data, myPath, idNum, pdf_HO_info) {
 
 		var createPDF_NJ = function(){
 				/* Size based on 72 pixes/inch */
-			  var w = 306, l = 396;
 				var myDoc = new pdf({
 				    size: [ 612, 396 ],
 				    margins : { // by default, all are 72
@@ -88,46 +87,42 @@ module.exports = function(data, myPath, idNum, pdf_HO_info) {
 				   .fillColor('red')
 				   .text( code, { width: 268, align: 'center' } );
 
-				// 	if(pdf_HO_info){
- 			// 		var [hoName, sets, numCerts ] = pdf_HO_info.split('|');
- 			// 		myDoc.fontSize(18)
- 			// 		   .moveto(306, 72)
- 			// 		   .text( `${hoName} : ${sets} sets | ${numCerts} cards`, { width: 268, align: 'center' } );
- 			// 	}
-
 				myDoc.fontSize(14)
 				   .fillColor('#000')
 				   .moveDown()
 				   .text( 'Mail Cycle: '+workOrder, { width: 268, align: 'center' } )
-				   .moveDown(3)
+				   .moveDown(2)
 				   .text( town, { width: 240, align: 'center' } )
 				   .moveDown()
 				   .text( 'Print Date: '+printDate, { width: 268, align: 'center' } )
 				   .text( printTotal, { width: 268, align: 'center' } );
 
+				myDoc.fontSize(12)
+				   .text( `[ ${ idNum.length } Files printed in this batch.  ]`, 10, 250,  { width: 268, align: 'center' } )
+				   .moveDown()
+  				   .text( '     '+idNum, { width: 600, align: 'left' } );
+
+
 				if(pdf_HO_info){
-					var [hoName, sets, numCerts ] = pdf_HO_info.split('|');
-					myDoc.fontSize(18)
-					   .moveDown(2)
-					   .text( `${hoName} : ${sets} sets | ${numCerts} cards`, { width: 268, align: 'center' } );
-				}
+ 					var [hoName, sets, numCerts ] = pdf_HO_info.split('|');
+ 					myDoc.fontSize(18)
+  					   .text( `${hoName} : ${sets} sets | ${numCerts} cards`, 310, 72, { width: 300, align: 'left' }  );
+ 				}
+
+				// myDoc.fontSize(18)
+				//    .text( `HO1 Certiticates`, 310, 72, { width: 300, align: 'left' } );
 
 				// draw bars on right side
 				myDoc.lineWidth(10);
 				var start = 130;
-				for ( var x = 0; x < 8; x++ ){
+				for ( var x = 0; x < 7; x++ ){
 					myDoc.lineCap('butt')
-						.moveTo(390, start)
+						.moveTo(310, start)
 						.lineTo(612, start)
 						.stroke();
 
 					start += 20;
 				}
-
-				myDoc.fontSize(12)
-				   .text( `[ ${ idNum.length } Files printed in this batch.  ]`, 10, 330,  { width: 268, align: 'center' } )
-				   .moveDown()
-  				   .text( '     '+idNum, { width: 250, align: 'left' } );
 
 				// Close create PDF
 				myDoc.end();
