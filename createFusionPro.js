@@ -6,7 +6,7 @@ var spacer = function(){
 }
 
 module.exports = function(data, res) {
-    // console.log('Prg: csvImport - data: ',data);
+    //console.log('Prg: csvImport - data: ',data);
     var fs = require("fs");
     var pdfSlipSheets  = require("./pdfSlipSheets");
     var userTable = data.workOrder;
@@ -71,7 +71,8 @@ module.exports = function(data, res) {
 
         if(dd<10) dd='0'+dd;
         if(mm<10) mm='0'+mm;
-        todayIs = yyyy+mm+dd;
+        todayIs = yyyy.toString()+mm.toString()+dd.toString();
+
         // var todayIs = d.toLocaleDateString().replace(/\/+/g, '');
         var timeNow = today.toTimeString().slice(0, 8).split(':', 3).join(' ').replace(/\s+/g, '-'); ;
         return [ todayIs, timeNow ];
@@ -170,7 +171,6 @@ module.exports = function(data, res) {
     var batchNumber = batchNo();
 
     var file   = fs.createWriteStream(outPutFile);
-
     file.on('error', function(err) { /* error handling */
         console.log('ln: 138','Problem with opening file: ',outPutFile );
     });
